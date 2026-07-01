@@ -14,7 +14,8 @@
   <% } %>
 
   <% if (!reports.length) { %>
-    <section class="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+    <section class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center shadow-sm">
+      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-700"><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7V3Z"/><path d="M14 3v5h5M9 13h6M9 17h4" stroke-linecap="round"/></svg></div>
       <h2 class="text-lg font-semibold text-slate-950">Belum ada laporan ditugaskan</h2>
       <p class="mt-2 text-sm text-slate-500">Laporan yang di-assign admin ke Anda akan tampil di sini.</p>
     </section>
@@ -22,7 +23,7 @@
     <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       <% reports.forEach((report) => { %>
         <% const statusMeta = getStatusMeta(report.status); %>
-        <a href="/reports/<%= report.id %>" class="group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+        <a href="/reports/<%= report.id %>" class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md">
           <div class="aspect-[4/3] bg-slate-100">
             <% if (report.photo_url) { %>
               <img src="<%= report.photo_url %>" alt="<%= report.title %>" class="h-full w-full object-cover">
