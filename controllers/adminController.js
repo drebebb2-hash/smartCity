@@ -1,3 +1,5 @@
+const PDFDocument = require('pdfkit');
+const ExcelJS = require('exceljs');
 const { createRequestClient } = require('../config/supabaseClient');
 const { createNotification } = require('../config/notificationHelper');
 
@@ -78,6 +80,80 @@ const loadCategories = async (userSupabase) => {
   return data || [];
 };
 
+const getReportFilters = (query) => ({
+  status: query.status || '',
+  category: query.category || '',
+  search: query.search || ''
+});
+
+const buildReportExportQueryString = (filters) => {
+  const params = new URLSearchParams();
+
+  if (filters.status) params.set('status', filters.status);
+  if (filters.category) params.set('category', filters.category);
+  if (filters.search) params.set('search', filters.search);
+
+  return params.toString();
+};
+
+const buildAdminReportsQuery = (userSupabase, filters) => {
+  let query = userSupabase
+    .from('reports')
+    .select(`
+      id,
+      user_id,
+      assigned_to,
+      title,
+      photo_url,
+      status,
+      created_at,
+      categories (
+        id,
+        name,
+        icon
+      ),
+      profiles!reports_user_id_fkey (
+        full_name
+      )
+    `)
+    .order('created_at', { ascending: false });
+
+  if (filters.status) {
+    query = query.eq('status', filters.status);
+  }
+
+  if (filters.category) {
+    query = query.eq('category_id', filters.category);
+  }
+
+  if (filters.search) {
+    query = query.ilike('title', `%${filters.search}%`);
+  }
+
+  return query;
+};
+
+const loadAdminReports = async (userSupabase, filters) => {
+  const { data, error } = await buildAdminReportsQuery(userSupabase, filters);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+};
+
+const getExportDateStamp = () => new Date().toISOString().slice(0, 10);
+
+const getReportExportRows = (reports) => reports.map((report, index) => ({
+  no: index + 1,
+  title: report.title || '-',
+  category: report.categories?.name || 'Tanpa kategori',
+  reporter: report.profiles?.full_name || 'Tidak diketahui',
+  status: getStatusMeta(report.status).label,
+  createdAt: formatDate(report.created_at)
+}));
+
 const getPetugasList = async (userSupabase) => {
   const { data, error } = await userSupabase
     .from('profiles')
@@ -154,56 +230,12 @@ exports.getDashboard = async (req, res) => {
 };
 
 exports.getAllReports = async (req, res) => {
-  const filters = {
-    status: req.query.status || '',
-    category: req.query.category || '',
-    search: req.query.search || ''
-  };
+  const filters = getReportFilters(req.query);
 
   try {
     const userSupabase = getUserSupabase(req);
     const categories = await loadCategories(userSupabase);
-
-    let query = userSupabase
-      .from('reports')
-      .select(`
-        id,
-        user_id,
-        assigned_to,
-        title,
-        photo_url,
-        status,
-        created_at,
-        categories (
-          id,
-          name,
-          icon
-        ),
-        profiles!reports_user_id_fkey (
-          full_name
-        )
-      `)
-      .order('created_at', { ascending: false });
-
-    if (filters.status) {
-      query = query.eq('status', filters.status);
-    }
-
-    if (filters.category) {
-      query = query.eq('category_id', filters.category);
-    }
-
-    if (filters.search) {
-      query = query.ilike('title', `%${filters.search}%`);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    const reports = data || [];
+    const reports = await loadAdminReports(userSupabase, filters);
     const assignedIds = [...new Set(reports.map((report) => report.assigned_to).filter(Boolean))];
     const assignedMap = new Map();
 
@@ -231,6 +263,7 @@ exports.getAllReports = async (req, res) => {
       categories,
       filters,
       statusList,
+      exportQuery: buildReportExportQueryString(filters),
       getStatusMeta,
       formatDate,
       error: null
@@ -242,6 +275,7 @@ exports.getAllReports = async (req, res) => {
       categories: [],
       filters,
       statusList,
+      exportQuery: buildReportExportQueryString(filters),
       getStatusMeta,
       formatDate,
       error: `Gagal memuat laporan: ${error.message}`
@@ -253,6 +287,157 @@ exports.getStatisticsPage = (req, res) => {
   res.render('admin/statistics', {
     title: 'Statistik Laporan'
   });
+};
+
+exports.exportReportsPDF = async (req, res) => {
+  try {
+    const filters = getReportFilters(req.query);
+    const userSupabase = getUserSupabase(req);
+    const reports = await loadAdminReports(userSupabase, filters);
+    const rows = getReportExportRows(reports);
+    const dateStamp = getExportDateStamp();
+    const filename = `laporan-smart-city-${dateStamp}.pdf`;
+    const doc = new PDFDocument({
+      margin: 36,
+      size: 'A4',
+      layout: 'landscape'
+    });
+    const columns = [
+      { label: 'No', key: 'no', width: 35 },
+      { label: 'Judul', key: 'title', width: 220 },
+      { label: 'Kategori', key: 'category', width: 120 },
+      { label: 'Pelapor', key: 'reporter', width: 140 },
+      { label: 'Status', key: 'status', width: 90 },
+      { label: 'Tanggal', key: 'createdAt', width: 140 }
+    ];
+    const rowHeight = 28;
+    const tableX = doc.page.margins.left;
+    let tableY = 108;
+
+    const drawTableHeader = () => {
+      let currentX = tableX;
+
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(9)
+        .fillColor('#111827');
+
+      columns.forEach((column) => {
+        doc
+          .rect(currentX, tableY, column.width, rowHeight)
+          .fillAndStroke('#e5e7eb', '#cbd5e1')
+          .fillColor('#111827')
+          .text(column.label, currentX + 5, tableY + 9, {
+            width: column.width - 10,
+            height: rowHeight - 8
+          });
+        currentX += column.width;
+      });
+
+      tableY += rowHeight;
+    };
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    doc.pipe(res);
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(18)
+      .fillColor('#064e3b')
+      .text('Laporan Smart City Report', { align: 'center' });
+    doc
+      .moveDown(0.5)
+      .font('Helvetica')
+      .fontSize(10)
+      .fillColor('#475569')
+      .text(`Tanggal export: ${formatDate(new Date())}`, { align: 'center' });
+
+    drawTableHeader();
+
+    doc.font('Helvetica').fontSize(8).fillColor('#111827');
+
+    if (!rows.length) {
+      doc.text('Tidak ada data laporan untuk filter yang dipilih.', tableX, tableY + 10);
+    }
+
+    rows.forEach((row) => {
+      if (tableY + rowHeight > doc.page.height - doc.page.margins.bottom) {
+        doc.addPage();
+        tableY = doc.page.margins.top;
+        drawTableHeader();
+        doc.font('Helvetica').fontSize(8).fillColor('#111827');
+      }
+
+      let currentX = tableX;
+
+      columns.forEach((column) => {
+        doc
+          .rect(currentX, tableY, column.width, rowHeight)
+          .stroke('#cbd5e1')
+          .text(String(row[column.key]), currentX + 5, tableY + 8, {
+            width: column.width - 10,
+            height: rowHeight - 8,
+            ellipsis: true
+          });
+        currentX += column.width;
+      });
+
+      tableY += rowHeight;
+    });
+
+    doc.end();
+  } catch (error) {
+    req.flash('error', `Gagal export PDF: ${error.message}`);
+    return res.redirect(`/admin/reports?${buildReportExportQueryString(getReportFilters(req.query))}`);
+  }
+};
+
+exports.exportReportsExcel = async (req, res) => {
+  try {
+    const filters = getReportFilters(req.query);
+    const userSupabase = getUserSupabase(req);
+    const reports = await loadAdminReports(userSupabase, filters);
+    const rows = getReportExportRows(reports);
+    const dateStamp = getExportDateStamp();
+    const filename = `laporan-smart-city-${dateStamp}.xlsx`;
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Laporan');
+
+    worksheet.columns = [
+      { header: 'No', key: 'no', width: 8 },
+      { header: 'Judul', key: 'title', width: 30 },
+      { header: 'Kategori', key: 'category', width: 20 },
+      { header: 'Pelapor', key: 'reporter', width: 24 },
+      { header: 'Status', key: 'status', width: 16 },
+      { header: 'Tanggal', key: 'createdAt', width: 24 }
+    ];
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE2F3E8' }
+    };
+    worksheet.addRows(rows);
+    worksheet.columns.forEach((column) => {
+      let maxLength = String(column.header || '').length;
+
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        maxLength = Math.max(maxLength, String(cell.value || '').length);
+      });
+
+      column.width = Math.min(Math.max(maxLength + 2, column.width || 10), 50);
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    await workbook.xlsx.write(res);
+    return res.end();
+  } catch (error) {
+    req.flash('error', `Gagal export Excel: ${error.message}`);
+    return res.redirect(`/admin/reports?${buildReportExportQueryString(getReportFilters(req.query))}`);
+  }
 };
 
 exports.getStatsData = async (req, res) => {
@@ -576,23 +761,34 @@ exports.assignReport = async (req, res) => {
       return res.redirect(`/reports/${reportId}`);
     }
 
-    const { error: updateError } = await userSupabase
+    const { data: assignedReport, error: updateError } = await userSupabase
       .from('reports')
       .update({ assigned_to: petugasId })
-      .eq('id', reportId);
+      .eq('id', reportId)
+      .select('id, assigned_to')
+      .single();
 
-    if (updateError) {
-      throw new Error(updateError.message);
+    if (updateError || !assignedReport || assignedReport.assigned_to !== petugasId) {
+      throw new Error(
+        updateError?.message
+        || 'Assign petugas tidak tersimpan. Pastikan policy update reports untuk admin sudah dijalankan di Supabase SQL Editor.'
+      );
     }
 
-    await createNotification(
-      petugasId,
-      reportId,
-      `Anda ditugaskan menangani laporan: ${report.title}`,
-      userSupabase
-    );
+    try {
+      await createNotification(
+        petugasId,
+        reportId,
+        `Anda ditugaskan menangani laporan: ${report.title}`,
+        userSupabase
+      );
 
-    req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}.`);
+      req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'} dan notifikasi dikirim.`);
+    } catch (notificationError) {
+      console.warn(`Notifikasi assignment gagal dikirim untuk laporan ${reportId}: ${notificationError.message}`);
+      req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}.`);
+    }
+
     return res.redirect(`/reports/${reportId}`);
   } catch (error) {
     req.flash('error', `Gagal assign petugas: ${error.message}`);
@@ -612,6 +808,22 @@ exports.updateReportStatus = async (req, res) => {
   try {
     const userSupabase = getUserSupabase(req);
     const notificationMessage = getStatusNotificationMessage(status);
+    const { data: report, error: reportError } = await userSupabase
+      .from('reports')
+      .select('id, assigned_to')
+      .eq('id', reportId)
+      .single();
+
+    if (reportError || !report) {
+      req.flash('error', 'Laporan tidak ditemukan.');
+      return res.redirect('/admin/reports');
+    }
+
+    if (req.session.user.role === 'petugas' && report.assigned_to !== req.session.user.id) {
+      req.flash('error', 'Anda hanya bisa memperbarui status laporan yang ditugaskan kepada Anda.');
+      return res.redirect('/petugas/dashboard');
+    }
+
     const { error: updateError } = await userSupabase
       .rpc('update_report_status_with_history', {
         p_report_id: reportId,
