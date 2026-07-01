@@ -23,13 +23,6 @@ create policy "Admins can create notifications for assignments"
 on public.notifications
 for insert
 to authenticated
-with check (
-  exists (
-    select 1
-    from public.profiles
-    where profiles.id = auth.uid()
-      and profiles.role = 'admin'
-  )
-);
+with check (public.get_current_user_role() = 'admin');
 
 alter publication supabase_realtime add table public.notifications;

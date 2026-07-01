@@ -585,14 +585,22 @@ exports.assignReport = async (req, res) => {
       throw new Error(updateError.message);
     }
 
-    await createNotification(
-      petugasId,
-      reportId,
-      `Anda ditugaskan menangani laporan: ${report.title}`,
-      userSupabase
-    );
+    try {
+      await createNotification(
+        petugasId,
+        reportId,
+        `Anda ditugaskan menangani laporan: ${report.title}`,
+        userSupabase
+      );
 
-    req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}.`);
+      req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'} dan notifikasi dikirim.`);
+    } catch (notificationError) {
+      req.flash(
+        'success',
+        `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}, tetapi notifikasi belum terkirim: ${notificationError.message}`
+      );
+    }
+
     return res.redirect(`/reports/${reportId}`);
   } catch (error) {
     req.flash('error', `Gagal assign petugas: ${error.message}`);
