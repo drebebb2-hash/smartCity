@@ -17,7 +17,11 @@ const createNotification = async (userId, reportId, message, supabaseClient = su
     .single();
 
   if (error) {
-    throw new Error(error.message);
+    const rlsHint = error.message.includes('row-level security')
+      ? ' Pastikan policy insert notifications untuk admin sudah dijalankan di Supabase SQL Editor.'
+      : '';
+
+    throw new Error(`${error.message}${rlsHint}`);
   }
 
   return data;
