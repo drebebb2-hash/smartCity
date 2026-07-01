@@ -46,6 +46,21 @@
             </div>
             <h2 class="line-clamp-2 text-lg font-semibold text-slate-950 group-hover:text-emerald-700"><%= report.title %></h2>
             <p class="text-sm text-slate-500"><%= formatDate(report.created_at) %></p>
+            <% if (report.status === 'selesai') { %>
+              <% if (report.userRating) { %>
+                <span class="inline-flex items-center rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                  ★ Sudah diberi rating <%= report.userRating.score %>/5
+                </span>
+              <% } else { %>
+                <span class="inline-flex items-center rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-white transition group-hover:bg-amber-600">
+                  ★ Beri Rating Sekarang
+                </span>
+              <% } %>
+            <% } else { %>
+              <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-500">
+                Rating tersedia setelah laporan selesai
+              </span>
+            <% } %>
           </div>
         </a>
       <% }) %>

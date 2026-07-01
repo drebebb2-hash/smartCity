@@ -93,8 +93,14 @@
         </section>
       <% } %>
 
-      <% if (currentUser && report.status === 'selesai' && report.user_id === currentUser.id) { %>
-        <% if (userRating) { %>
+      <% if (currentUser && report.user_id === currentUser.id) { %>
+        <% if (report.status !== 'selesai') { %>
+          <section class="rounded-lg border border-slate-200 bg-slate-50 p-6 shadow-sm">
+            <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Rating Kepuasan</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950">Rating belum tersedia</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Form rating akan muncul otomatis di sini setelah laporan Anda berstatus <span class="font-semibold">Selesai</span>.</p>
+          </section>
+        <% } else if (userRating) { %>
           <section class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm">
             <p class="text-sm font-semibold uppercase tracking-wide text-amber-700">Rating Kepuasan</p>
             <h2 class="mt-1 text-lg font-semibold text-slate-950">Terima kasih atas rating Anda</h2>

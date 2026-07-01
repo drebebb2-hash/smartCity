@@ -204,9 +204,32 @@ exports.getMyReports = async (req, res) => {
 
     if (error) throw new Error(error.message);
 
+    const reports = data || [];
+    const reportIds = reports.map((report) => report.id);
+    const ratingMap = new Map();
+
+    if (reportIds.length) {
+      const { data: ratings, error: ratingsError } = await userSupabase
+        .from('ratings')
+        .select('id, report_id, score')
+        .eq('user_id', req.session.user.id)
+        .in('report_id', reportIds);
+
+      if (ratingsError) {
+        throw new Error(ratingsError.message);
+      }
+
+      (ratings || []).forEach((rating) => {
+        ratingMap.set(rating.report_id, rating);
+      });
+    }
+
     res.render('reports/my-reports', {
       title: 'Laporan Saya',
-      reports: data || [],
+      reports: reports.map((report) => ({
+        ...report,
+        userRating: ratingMap.get(report.id) || null
+      })),
       getStatusMeta,
       formatDate,
       error: null
@@ -303,6 +326,23 @@ exports.getReportDetail = async (req, res) => {
       .maybeSingle();
 
     if (userUpvoteError) throw new Error(userUpvoteError.message);
+
+    let userRating = null;
+
+    if (report.user_id === req.session.user.id) {
+      const { data: rating, error: ratingError } = await userSupabase
+        .from('ratings')
+        .select('id, score, feedback, created_at')
+        .eq('report_id', report.id)
+        .eq('user_id', req.session.user.id)
+        .maybeSingle();
+
+      if (ratingError) {
+        throw new Error(ratingError.message);
+      }
+
+      userRating = rating || null;
+    }
 
     let userRating = null;
 
