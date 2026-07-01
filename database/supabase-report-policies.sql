@@ -129,6 +129,14 @@ to authenticated
 using (public.is_staff_user())
 with check (public.is_staff_user());
 
+drop policy if exists "Admins can assign reports" on public.reports;
+create policy "Admins can assign reports"
+on public.reports
+for update
+to authenticated
+using (public.get_current_user_role() = 'admin')
+with check (public.get_current_user_role() = 'admin');
+
 drop policy if exists "Users can view own report status history" on public.report_status_history;
 create policy "Users can view own report status history"
 on public.report_status_history
@@ -223,3 +231,36 @@ on storage.objects
 for select
 to public
 using (bucket_id = 'report-photos');
+
+alter table public.ratings enable row level security;
+
+drop policy if exists "Users can view own ratings" on public.ratings;
+create policy "Users can view own ratings"
+on public.ratings
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+drop policy if exists "Admins can view all ratings" on public.ratings;
+create policy "Admins can view all ratings"
+on public.ratings
+for select
+to authenticated
+using (public.get_current_user_role() = 'admin');
+
+drop policy if exists "Users can rate completed own reports" on public.ratings;
+create policy "Users can rate completed own reports"
+on public.ratings
+for insert
+to authenticated
+with check (
+  auth.uid() = user_id
+  and score between 1 and 5
+  and exists (
+    select 1
+    from public.reports
+    where reports.id = ratings.report_id
+      and reports.user_id = auth.uid()
+      and reports.status = 'selesai'
+  )
+);

@@ -93,6 +93,59 @@
         </section>
       <% } %>
 
+      <% if (currentUser && report.status === 'selesai' && report.user_id === currentUser.id) { %>
+        <% if (userRating) { %>
+          <section class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm">
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700">Rating Kepuasan</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950">Terima kasih atas rating Anda</h2>
+            <div class="mt-4 flex items-center gap-2" aria-label="Rating <%= userRating.score %> dari 5">
+              <% for (let star = 1; star <= 5; star += 1) { %>
+                <span class="text-2xl <%= star <= userRating.score ? 'text-amber-400' : 'text-slate-300' %>">★</span>
+              <% } %>
+              <span class="ml-2 text-sm font-semibold text-slate-700"><%= userRating.score %>/5</span>
+            </div>
+            <% if (userRating.feedback) { %>
+              <div class="mt-4 rounded-lg border border-amber-200 bg-white p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">Feedback</p>
+                <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700"><%= userRating.feedback %></p>
+              </div>
+            <% } %>
+            <p class="mt-3 text-xs text-amber-700">Dikirim pada <%= formatDate(userRating.created_at) %></p>
+          </section>
+        <% } else { %>
+          <section class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm">
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700">Rating Kepuasan</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950">Bagaimana penanganan laporan Anda?</h2>
+            <p class="mt-1 text-sm text-slate-600">Berikan rating setelah laporan selesai agar admin bisa mengevaluasi kualitas penanganan.</p>
+
+            <form action="/reports/<%= report.id %>/rating" method="POST" class="mt-5 space-y-4" data-rating-form>
+              <input type="hidden" name="score" value="" data-rating-input>
+
+              <div>
+                <p class="mb-2 block text-sm font-medium text-slate-700">Rating</p>
+                <div class="flex gap-1" role="radiogroup" aria-label="Pilih rating kepuasan">
+                  <% for (let star = 1; star <= 5; star += 1) { %>
+                    <button type="button" class="text-3xl text-slate-300 transition hover:scale-110 hover:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200" data-rating-star="<%= star %>" aria-label="<%= star %> bintang">★</button>
+                  <% } %>
+                </div>
+                <p class="mt-2 text-sm text-slate-600" data-rating-label>Belum memilih rating.</p>
+              </div>
+
+              <div>
+                <label for="feedback" class="mb-2 block text-sm font-medium text-slate-700">Feedback opsional</label>
+                <textarea id="feedback" name="feedback" rows="4" placeholder="Ceritakan pengalaman Anda atas penanganan laporan ini..." class="w-full resize-y rounded-lg border border-amber-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"></textarea>
+              </div>
+
+              <div class="flex justify-end">
+                <button type="submit" class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600">
+                  Kirim Rating
+                </button>
+              </div>
+            </form>
+          </section>
+        <% } %>
+      <% } %>
+
       <% if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'petugas')) { %>
         <section class="rounded-lg border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
           <div class="mb-5">
@@ -195,6 +248,36 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+  const ratingForm = document.querySelector('[data-rating-form]');
+
+  if (ratingForm) {
+    const ratingInput = ratingForm.querySelector('[data-rating-input]');
+    const ratingLabel = ratingForm.querySelector('[data-rating-label]');
+    const ratingStars = [...ratingForm.querySelectorAll('[data-rating-star]')];
+
+    const setRating = (score) => {
+      ratingInput.value = String(score);
+      ratingLabel.textContent = `${score} dari 5 bintang dipilih.`;
+      ratingStars.forEach((star) => {
+        const starValue = Number(star.dataset.ratingStar);
+        star.classList.toggle('text-amber-400', starValue <= score);
+        star.classList.toggle('text-slate-300', starValue > score);
+      });
+    };
+
+    ratingStars.forEach((star) => {
+      star.addEventListener('click', () => setRating(Number(star.dataset.ratingStar)));
+    });
+
+    ratingForm.addEventListener('submit', (event) => {
+      if (!ratingInput.value) {
+        event.preventDefault();
+        ratingLabel.textContent = 'Pilih rating terlebih dahulu.';
+        ratingLabel.classList.add('text-red-600', 'font-semibold');
+      }
+    });
+  }
+
   const reportLat = Number('<%= report.latitude %>');
   const reportLng = Number('<%= report.longitude %>');
   const map = L.map('detailMap').setView([reportLat, reportLng], 15);

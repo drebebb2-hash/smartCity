@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { createRequestClient } = require('../config/supabaseClient');
+const { getPetugasList } = require('./adminController');
 
 const renderNewReportForm = (res, data = {}) => {
   res.render('reports/new', {
@@ -87,7 +88,7 @@ const formatDate = (value) => {
 const getReportForAccessCheck = async (userSupabase, reportId) => {
   const { data, error } = await userSupabase
     .from('reports')
-    .select('id, user_id')
+    .select('id, user_id, status')
     .eq('id', reportId)
     .single();
 
@@ -359,21 +360,28 @@ exports.getReportDetail = async (req, res) => {
       throw new Error(userUpvoteError.message);
     }
 
+    let userRating = null;
+
+    if (report.user_id === req.session.user.id) {
+      const { data: rating, error: ratingError } = await userSupabase
+        .from('ratings')
+        .select('id, score, feedback, created_at')
+        .eq('report_id', report.id)
+        .eq('user_id', req.session.user.id)
+        .maybeSingle();
+
+      if (ratingError) {
+        throw new Error(ratingError.message);
+      }
+
+      userRating = rating || null;
+    }
+
     let petugasList = [];
     let assignedPetugas = null;
 
     if (req.session.user.role === 'admin') {
-      const { data: petugas, error: petugasError } = await userSupabase
-        .from('profiles')
-        .select('id, full_name, phone, avatar_url')
-        .eq('role', 'petugas')
-        .order('full_name', { ascending: true });
-
-      if (petugasError) {
-        throw new Error(petugasError.message);
-      }
-
-      petugasList = petugas || [];
+      petugasList = await getPetugasList(userSupabase);
       assignedPetugas = petugasList.find((profile) => profile.id === report.assigned_to) || null;
 
       if (report.assigned_to && !assignedPetugas) {
@@ -396,6 +404,7 @@ exports.getReportDetail = async (req, res) => {
       comments: comments || [],
       upvoteCount: upvoteCount || 0,
       hasUpvoted: Boolean(userUpvote),
+      userRating,
       petugasList,
       assignedPetugas,
       getStatusMeta,
@@ -404,6 +413,76 @@ exports.getReportDetail = async (req, res) => {
   } catch (error) {
     req.flash('error', `Gagal memuat detail laporan: ${error.message}`);
     return res.redirect('/reports/my');
+  }
+};
+
+exports.submitRating = async (req, res) => {
+  const reportId = req.params.id;
+  const score = Number(req.body.score);
+  const feedback = req.body.feedback ? req.body.feedback.trim() : null;
+
+  if (!Number.isInteger(score) || score < 1 || score > 5) {
+    req.flash('error', 'Pilih rating 1 sampai 5 bintang.');
+    return res.redirect(`/reports/${reportId}`);
+  }
+
+  try {
+    const userSupabase = getUserSupabase(req);
+    const { data: report, error: reportError } = await userSupabase
+      .from('reports')
+      .select('id, user_id, status')
+      .eq('id', reportId)
+      .single();
+
+    if (reportError || !report) {
+      req.flash('error', 'Laporan tidak ditemukan.');
+      return res.redirect('/reports/my');
+    }
+
+    if (report.user_id !== req.session.user.id) {
+      req.flash('error', 'Anda hanya bisa memberi rating untuk laporan milik Anda.');
+      return res.redirect(`/reports/${reportId}`);
+    }
+
+    if (report.status !== 'selesai') {
+      req.flash('error', 'Rating hanya bisa diberikan setelah laporan berstatus selesai.');
+      return res.redirect(`/reports/${reportId}`);
+    }
+
+    const { data: existingRating, error: existingRatingError } = await userSupabase
+      .from('ratings')
+      .select('id')
+      .eq('report_id', reportId)
+      .eq('user_id', req.session.user.id)
+      .maybeSingle();
+
+    if (existingRatingError) {
+      throw new Error(existingRatingError.message);
+    }
+
+    if (existingRating) {
+      req.flash('error', 'Anda sudah pernah memberi rating untuk laporan ini.');
+      return res.redirect(`/reports/${reportId}`);
+    }
+
+    const { error: insertError } = await userSupabase
+      .from('ratings')
+      .insert({
+        report_id: reportId,
+        user_id: req.session.user.id,
+        score,
+        feedback
+      });
+
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
+
+    req.flash('success', 'Terima kasih, rating Anda berhasil dikirim.');
+    return res.redirect(`/reports/${reportId}`);
+  } catch (error) {
+    req.flash('error', `Gagal mengirim rating: ${error.message}`);
+    return res.redirect(`/reports/${reportId}`);
   }
 };
 

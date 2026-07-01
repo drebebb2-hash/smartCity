@@ -18,10 +18,11 @@ using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
 drop policy if exists "Authenticated users can create notifications" on public.notifications;
-create policy "Authenticated users can create notifications"
+drop policy if exists "Admins can create notifications for assignments" on public.notifications;
+create policy "Admins can create notifications for assignments"
 on public.notifications
 for insert
 to authenticated
-with check (true);
+with check (public.get_current_user_role() = 'admin');
 
 alter publication supabase_realtime add table public.notifications;
