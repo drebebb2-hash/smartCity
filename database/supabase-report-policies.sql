@@ -129,6 +129,14 @@ to authenticated
 using (public.is_staff_user())
 with check (public.is_staff_user());
 
+drop policy if exists "Admins can assign reports" on public.reports;
+create policy "Admins can assign reports"
+on public.reports
+for update
+to authenticated
+using (public.get_current_user_role() = 'admin')
+with check (public.get_current_user_role() = 'admin');
+
 drop policy if exists "Users can view own report status history" on public.report_status_history;
 create policy "Users can view own report status history"
 on public.report_status_history

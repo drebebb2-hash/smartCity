@@ -5,10 +5,24 @@
     <%- include('partials/nav', { activeMenu: 'reports' }) %>
 
     <section>
-      <div class="mb-8">
-        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Manajemen Laporan</p>
-        <h1 class="mt-2 text-3xl font-bold text-slate-950">Semua Laporan</h1>
-        <p class="mt-2 text-slate-600">Filter laporan berdasarkan status, kategori, atau judul laporan.</p>
+      <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Manajemen Laporan</p>
+          <h1 class="mt-2 text-3xl font-bold text-slate-950">Semua Laporan</h1>
+          <p class="mt-2 text-slate-600">Filter laporan berdasarkan status, kategori, atau judul laporan.</p>
+        </div>
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 shadow-sm">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">Export / Simpan Data</p>
+          <div class="flex flex-wrap gap-2">
+            <a href="/admin/reports/export/excel<%= exportQuery ? `?${exportQuery}` : '' %>" class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+              💾 Save ke Excel
+            </a>
+            <a href="/admin/reports/export/pdf<%= exportQuery ? `?${exportQuery}` : '' %>" class="inline-flex items-center rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50">
+              📄 Save ke PDF
+            </a>
+          </div>
+          <p class="mt-2 text-xs text-emerald-700">File yang disimpan mengikuti filter aktif di bawah.</p>
+        </div>
       </div>
 
       <% if (error) { %>
