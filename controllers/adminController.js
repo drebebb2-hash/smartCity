@@ -576,13 +576,18 @@ exports.assignReport = async (req, res) => {
       return res.redirect(`/reports/${reportId}`);
     }
 
-    const { error: updateError } = await userSupabase
+    const { data: assignedReport, error: updateError } = await userSupabase
       .from('reports')
       .update({ assigned_to: petugasId })
-      .eq('id', reportId);
+      .eq('id', reportId)
+      .select('id, assigned_to')
+      .single();
 
-    if (updateError) {
-      throw new Error(updateError.message);
+    if (updateError || !assignedReport || assignedReport.assigned_to !== petugasId) {
+      throw new Error(
+        updateError?.message
+        || 'Assign petugas tidak tersimpan. Pastikan policy update reports untuk admin sudah dijalankan di Supabase SQL Editor.'
+      );
     }
 
     try {
