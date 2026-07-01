@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/admin/dashboard', requireAuth, requireRole('admin'), adminController.getDashboard);
 router.get('/admin/reports', requireAuth, requireRole('admin', 'petugas'), adminController.getAllReports);
+router.get('/admin/reports/export/pdf', requireAuth, requireRole('admin'), adminController.exportReportsPDF);
+router.get('/admin/reports/export/excel', requireAuth, requireRole('admin'), adminController.exportReportsExcel);
 router.get('/admin/statistics', requireAuth, requireRole('admin'), adminController.getStatisticsPage);
 router.get('/api/admin/stats-data', requireAuth, requireRole('admin'), adminController.getStatsData);
 router.get('/admin/categories', requireAuth, requireRole('admin'), adminController.getCategoriesPage);
