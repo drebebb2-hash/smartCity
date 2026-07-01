@@ -2,66 +2,86 @@
 
 <%
   const emergencyContacts = [
-    { emoji: "🚔", name: "Polisi", number: "110", desc: "Laporan kriminal, kecelakaan, gangguan keamanan", color: "blue" },
-    { emoji: "🚒", name: "Pemadam Kebakaran", number: "113", desc: "Kebakaran gedung, hutan, atau kendaraan", color: "red" },
-    { emoji: "🚑", name: "Ambulans Darurat", number: "118", desc: "Kegawatdaruratan medis, kecelakaan", color: "rose" },
-    { emoji: "🏥", name: "Emergency Nasional", number: "119", desc: "Pusat komando darurat nasional terpadu", color: "pink" },
-    { emoji: "⚡", name: "PLN (Listrik)", number: "123", desc: "Gangguan listrik, pemadaman, bahaya instalasi", color: "yellow" },
-    { emoji: "💧", name: "PDAM (Air)", number: "1500-111", desc: "Gangguan air bersih, kebocoran pipa utama", color: "cyan" },
-    { emoji: "⛑️", name: "Basarnas (SAR)", number: "115", desc: "Pencarian dan penyelamatan, orang hilang", color: "orange" },
-    { emoji: "🌊", name: "BPBD (Bencana)", number: "117", desc: "Banjir, gempa, longsor dan bencana alam", color: "indigo" },
-    { emoji: "💉", name: "Posko Kesehatan", number: "119 ext 9", desc: "Hotline kesehatan dan informasi medis", color: "green" },
-    { emoji: "🚂", name: "Pengaduan Kemenhub", number: "151", desc: "Pengaduan transportasi umum, jalan, pelabuhan", color: "purple" },
-    { emoji: "⚖️", name: "Komnas HAM", number: "1500-777", desc: "Pelanggaran hak asasi manusia", color: "teal" },
-    { emoji: "🆘", name: "Nomor Tunggal Darurat", number: "112", desc: "Satu nomor untuk semua keadaan darurat", color: "red" }
+    { code: 'PL', name: 'Polisi', number: '110', desc: 'Laporan kriminal, kecelakaan, gangguan keamanan', color: 'blue' },
+    { code: 'PK', name: 'Pemadam Kebakaran', number: '113', desc: 'Kebakaran gedung, hutan, atau kendaraan', color: 'red' },
+    { code: 'AD', name: 'Ambulans Darurat', number: '118', desc: 'Kegawatdaruratan medis, kecelakaan', color: 'rose' },
+    { code: 'EN', name: 'Emergency Nasional', number: '119', desc: 'Pusat komando darurat nasional terpadu', color: 'pink' },
+    { code: 'PLN', name: 'PLN (Listrik)', number: '123', desc: 'Gangguan listrik, pemadaman, bahaya instalasi', color: 'yellow' },
+    { code: 'PD', name: 'PDAM (Air)', number: '1500-111', desc: 'Gangguan air bersih, kebocoran pipa utama', color: 'cyan' },
+    { code: 'SAR', name: 'Basarnas (SAR)', number: '115', desc: 'Pencarian dan penyelamatan, orang hilang', color: 'orange' },
+    { code: 'BP', name: 'BPBD (Bencana)', number: '117', desc: 'Banjir, gempa, longsor dan bencana alam', color: 'indigo' },
+    { code: 'KS', name: 'Posko Kesehatan', number: '119 ext 9', desc: 'Hotline kesehatan dan informasi medis', color: 'green' },
+    { code: 'KH', name: 'Pengaduan Kemenhub', number: '151', desc: 'Pengaduan transportasi umum, jalan, pelabuhan', color: 'purple' },
+    { code: 'HAM', name: 'Komnas HAM', number: '1500-777', desc: 'Pelanggaran hak asasi manusia', color: 'teal' },
+    { code: '112', name: 'Nomor Tunggal Darurat', number: '112', desc: 'Satu nomor untuk semua keadaan darurat', color: 'red' }
   ];
   const colorClasses = {
-    blue: { border: 'border-l-blue-500', text: 'text-blue-600 dark:text-blue-400', button: 'bg-blue-600 hover:bg-blue-700' },
-    red: { border: 'border-l-red-500', text: 'text-red-600 dark:text-red-400', button: 'bg-red-600 hover:bg-red-700' },
-    rose: { border: 'border-l-rose-500', text: 'text-rose-600 dark:text-rose-400', button: 'bg-rose-600 hover:bg-rose-700' },
-    pink: { border: 'border-l-pink-500', text: 'text-pink-600 dark:text-pink-400', button: 'bg-pink-600 hover:bg-pink-700' },
-    yellow: { border: 'border-l-yellow-500', text: 'text-yellow-600 dark:text-yellow-400', button: 'bg-yellow-500 hover:bg-yellow-600' },
-    cyan: { border: 'border-l-cyan-500', text: 'text-cyan-600 dark:text-cyan-400', button: 'bg-cyan-600 hover:bg-cyan-700' },
-    orange: { border: 'border-l-orange-500', text: 'text-orange-600 dark:text-orange-400', button: 'bg-orange-600 hover:bg-orange-700' },
-    indigo: { border: 'border-l-indigo-500', text: 'text-indigo-600 dark:text-indigo-400', button: 'bg-indigo-600 hover:bg-indigo-700' },
-    green: { border: 'border-l-green-500', text: 'text-green-600 dark:text-green-400', button: 'bg-green-600 hover:bg-green-700' },
-    purple: { border: 'border-l-purple-500', text: 'text-purple-600 dark:text-purple-400', button: 'bg-purple-600 hover:bg-purple-700' },
-    teal: { border: 'border-l-teal-500', text: 'text-teal-600 dark:text-teal-400', button: 'bg-teal-600 hover:bg-teal-700' }
+    blue: { border: 'border-l-blue-500', icon: 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300', text: 'text-blue-600 dark:text-blue-400', button: 'bg-blue-600 hover:bg-blue-700' },
+    red: { border: 'border-l-red-500', icon: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-300', text: 'text-red-600 dark:text-red-400', button: 'bg-red-600 hover:bg-red-700' },
+    rose: { border: 'border-l-rose-500', icon: 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-300', text: 'text-rose-600 dark:text-rose-400', button: 'bg-rose-600 hover:bg-rose-700' },
+    pink: { border: 'border-l-pink-500', icon: 'bg-pink-50 text-pink-600 dark:bg-pink-950 dark:text-pink-300', text: 'text-pink-600 dark:text-pink-400', button: 'bg-pink-600 hover:bg-pink-700' },
+    yellow: { border: 'border-l-yellow-500', icon: 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300', text: 'text-yellow-600 dark:text-yellow-400', button: 'bg-yellow-500 hover:bg-yellow-600' },
+    cyan: { border: 'border-l-cyan-500', icon: 'bg-cyan-50 text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300', text: 'text-cyan-600 dark:text-cyan-400', button: 'bg-cyan-600 hover:bg-cyan-700' },
+    orange: { border: 'border-l-orange-500', icon: 'bg-orange-50 text-orange-600 dark:bg-orange-950 dark:text-orange-300', text: 'text-orange-600 dark:text-orange-400', button: 'bg-orange-600 hover:bg-orange-700' },
+    indigo: { border: 'border-l-indigo-500', icon: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300', text: 'text-indigo-600 dark:text-indigo-400', button: 'bg-indigo-600 hover:bg-indigo-700' },
+    green: { border: 'border-l-green-500', icon: 'bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-300', text: 'text-green-600 dark:text-green-400', button: 'bg-green-600 hover:bg-green-700' },
+    purple: { border: 'border-l-purple-500', icon: 'bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-300', text: 'text-purple-600 dark:text-purple-400', button: 'bg-purple-600 hover:bg-purple-700' },
+    teal: { border: 'border-l-teal-500', icon: 'bg-teal-50 text-teal-600 dark:bg-teal-950 dark:text-teal-300', text: 'text-teal-600 dark:text-teal-400', button: 'bg-teal-600 hover:bg-teal-700' }
   };
 %>
 
-<main class="min-h-screen bg-gray-50 pb-14 dark:bg-gray-900">
-  <section class="flex h-[200px] items-center justify-center bg-gradient-to-r from-red-600 to-rose-500 px-4 text-center text-white">
-    <div>
-      <div class="mb-3 text-6xl animate-pulse">🚨</div>
-      <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">Nomor Darurat Kota</h1>
-      <p class="mt-2 text-base font-semibold text-rose-50">Hubungi segera dalam situasi darurat</p>
+<main class="animate-fadeIn bg-slate-50 dark:bg-gray-900">
+  <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 to-blue-500 text-white">
+    <div class="absolute inset-0 opacity-20" aria-hidden="true">
+      <div class="absolute right-10 top-10 h-44 w-44 rounded-full border border-white/40"></div>
+      <div class="absolute -bottom-12 left-10 h-40 w-40 rounded-full bg-white/20 blur-2xl"></div>
+    </div>
+    <div class="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <p class="mb-4 inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">Informasi Publik</p>
+        <h1 class="text-3xl font-extrabold tracking-tight sm:text-5xl">Nomor Darurat Kota</h1>
+        <p class="mt-4 max-w-2xl text-base leading-7 text-indigo-50">Hubungi layanan resmi berikut saat membutuhkan respons cepat untuk keamanan, kesehatan, utilitas, atau bencana.</p>
+      </div>
     </div>
   </section>
 
-  <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <div class="mb-6 rounded-2xl border border-yellow-300 bg-yellow-100 p-4 text-center font-bold text-yellow-900 shadow-sm dark:border-yellow-700 dark:bg-yellow-950/60 dark:text-yellow-200">
-      ⚠️ Gunakan nomor darurat hanya untuk situasi mendesak. Penyalahgunaan dapat dikenakan sanksi hukum.
+  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mb-6 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm font-semibold leading-7 text-amber-900 shadow-sm dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+      Gunakan nomor darurat hanya untuk situasi mendesak. Penyalahgunaan dapat dikenakan sanksi hukum.
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <% emergencyContacts.forEach((contact) => { %>
         <% const classes = colorClasses[contact.color] || colorClasses.red; %>
+        <% const telNumber = contact.number.replace(/\s+/g, ''); %>
         <% if (contact.number === '112') { %>
-          <article class="col-span-full rounded-3xl bg-gradient-to-r from-red-600 to-rose-500 p-6 text-center text-white shadow-xl transition-all duration-200 hover:-translate-y-1 hover:shadow-lg sm:p-8">
-            <div class="text-5xl"><%= contact.emoji %></div>
-            <h2 class="mt-3 text-2xl font-extrabold"><%= contact.name %></h2>
-            <p class="mt-2 text-5xl font-black tracking-tight"><%= contact.number %></p>
-            <p class="mx-auto mt-3 max-w-2xl text-sm font-semibold text-rose-50"><%= contact.desc %></p>
-            <a href="tel:<%= contact.number.replace(/\s+/g, '') %>" class="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-extrabold text-red-600 transition-all duration-200 hover:bg-rose-50 active:scale-95 sm:w-auto sm:min-w-72">📞 Hubungi Sekarang</a>
+          <article class="col-span-full overflow-hidden rounded-3xl border border-rose-200 bg-white shadow-xl transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:border-rose-950 dark:bg-gray-900">
+            <div class="grid gap-6 p-6 sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-lg font-black text-rose-600 dark:bg-rose-950 dark:text-rose-300"><%= contact.code %></div>
+                <div>
+                  <p class="text-sm font-bold uppercase tracking-wide text-rose-600 dark:text-rose-300">Prioritas Utama</p>
+                  <h2 class="mt-1 text-2xl font-extrabold text-slate-950 dark:text-white"><%= contact.name %></h2>
+                  <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400"><%= contact.desc %></p>
+                </div>
+              </div>
+              <div class="sm:text-right">
+                <p class="text-5xl font-black tracking-tight text-rose-600 dark:text-rose-400"><%= contact.number %></p>
+                <a href="tel:<%= telNumber %>" class="mt-4 inline-flex w-full items-center justify-center rounded-2xl bg-rose-600 px-5 py-3 text-sm font-extrabold text-white shadow-sm transition-all duration-200 hover:bg-rose-700 active:scale-95 sm:w-auto">Hubungi Sekarang</a>
+              </div>
+            </div>
           </article>
         <% } else { %>
-          <article class="rounded-2xl border-l-4 <%= classes.border %> bg-white p-5 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:bg-gray-800">
-            <div class="text-4xl"><%= contact.emoji %></div>
-            <h2 class="mt-3 text-lg font-bold text-slate-950 dark:text-white"><%= contact.name %></h2>
-            <p class="mt-2 text-3xl font-black <%= classes.text %>"><%= contact.number %></p>
-            <p class="mt-2 min-h-10 text-sm leading-6 text-gray-500 dark:text-gray-400"><%= contact.desc %></p>
-            <a href="tel:<%= contact.number.replace(/\s+/g, '') %>" class="mt-5 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-bold text-white transition-all duration-200 active:scale-95 <%= classes.button %>">📞 Hubungi Sekarang</a>
+          <article class="rounded-3xl border border-slate-200 border-l-4 <%= classes.border %> bg-white p-5 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900">
+            <div class="flex items-start gap-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-black <%= classes.icon %>"><%= contact.code %></div>
+              <div class="min-w-0">
+                <h2 class="text-lg font-bold text-slate-950 dark:text-white"><%= contact.name %></h2>
+                <p class="mt-1 text-3xl font-black <%= classes.text %>"><%= contact.number %></p>
+              </div>
+            </div>
+            <p class="mt-4 min-h-12 text-sm leading-6 text-slate-500 dark:text-slate-400"><%= contact.desc %></p>
+            <a href="tel:<%= telNumber %>" class="mt-5 inline-flex w-full items-center justify-center rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-sm transition-all duration-200 active:scale-95 <%= classes.button %>">Hubungi Sekarang</a>
           </article>
         <% } %>
       <% }) %>
