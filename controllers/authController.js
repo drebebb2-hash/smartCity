@@ -4,7 +4,7 @@ const { createRequestClient } = require('../config/supabaseClient');
 const getDashboardPath = (role) => {
   if (role === 'admin') return '/admin/dashboard';
   if (role === 'petugas') return '/petugas/dashboard';
-  return '/dashboard';
+  return '/reports/my';
 };
 
 const renderAuthPage = (res, view, data = {}) => {
