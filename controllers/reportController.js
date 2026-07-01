@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const { createRequestClient } = require('../config/supabaseClient');
 const { getPetugasList } = require('./adminController');
-const { createNotification } = require('../config/notificationHelper');
 
 const renderNewReportForm = (res, data = {}) => {
   res.render('reports/new', {

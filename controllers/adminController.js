@@ -1,5 +1,5 @@
-const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
+const PDFDocument = require('pdfkit');
 const { createRequestClient } = require('../config/supabaseClient');
 const { createNotification } = require('../config/notificationHelper');
 
@@ -154,261 +154,102 @@ const getReportExportRows = (reports) => reports.map((report, index) => ({
   createdAt: formatDate(report.created_at)
 }));
 
-const truncateText = (value, maxLength) => {
-  const text = String(value || '-');
-  return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
-};
+const exportColumns = [
+  { header: 'No', key: 'no', width: 8 },
+  { header: 'Judul', key: 'title', width: 35 },
+  { header: 'Kategori', key: 'category', width: 20 },
+  { header: 'Pelapor', key: 'reporter', width: 24 },
+  { header: 'Status', key: 'status', width: 16 },
+  { header: 'Tanggal', key: 'createdAt', width: 24 }
+];
 
-const escapePdfText = (value) => String(value || '')
-  .replace(/\\/g, '\\\\')
-  .replace(/\(/g, '\\(')
-  .replace(/\)/g, '\\)');
+const writeReportsPdf = (res, rows) => {
+  const doc = new PDFDocument({ margin: 36, size: 'A4', layout: 'landscape' });
+  const columnWidths = [38, 210, 120, 130, 85, 130];
+  const rowHeight = 22;
 
-const buildReportsPdfBuffer = (rows) => {
-  const pageWidth = 842;
-  const pageHeight = 595;
-  const margin = 36;
-  const rowHeight = 20;
-  const rowsPerPage = 20;
-  const columns = [
-    { label: 'No', key: 'no', x: 36, max: 4 },
-    { label: 'Judul', key: 'title', x: 70, max: 34 },
-    { label: 'Kategori', key: 'category', x: 285, max: 18 },
-    { label: 'Pelapor', key: 'reporter', x: 405, max: 20 },
-    { label: 'Status', key: 'status', x: 540, max: 12 },
-    { label: 'Tanggal', key: 'createdAt', x: 625, max: 22 }
-  ];
-  const pages = [];
-  const exportDate = formatDate(new Date());
-  const chunks = rows.length ? rows : [{
-    no: '-',
-    title: 'Tidak ada data laporan untuk filter yang dipilih.',
-    category: '-',
-    reporter: '-',
-    status: '-',
-    createdAt: '-'
-  }];
+  doc.pipe(res);
+  doc.fontSize(18).font('Helvetica-Bold').text('Laporan Smart City Report', { align: 'center' });
+  doc.moveDown(0.4);
+  doc.fontSize(10).font('Helvetica').text(`Tanggal export: ${formatDate(new Date())}`, { align: 'left' });
+  doc.moveDown();
 
-  for (let index = 0; index < chunks.length; index += rowsPerPage) {
-    pages.push(chunks.slice(index, index + rowsPerPage));
-  }
+  const drawHeader = () => {
+    const startX = doc.x;
+    let x = startX;
 
-  const objects = [];
-  const addObject = (content) => {
-    objects.push(content);
-    return objects.length;
+    doc.font('Helvetica-Bold').fontSize(9);
+    exportColumns.forEach((column, index) => {
+      doc.text(column.header, x, doc.y, { width: columnWidths[index] });
+      x += columnWidths[index];
+    });
+    doc.moveDown(0.8);
+    doc.moveTo(startX, doc.y).lineTo(startX + columnWidths.reduce((sum, width) => sum + width, 0), doc.y).stroke();
+    doc.moveDown(0.4);
   };
 
-  const catalogId = addObject('');
-  const pagesId = addObject('');
-  const fontId = addObject('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
-  const pageIds = [];
+  drawHeader();
+  doc.font('Helvetica').fontSize(8);
 
-  pages.forEach((pageRows, pageIndex) => {
-    const commands = [
-      'BT /F1 18 Tf 300 555 Td (Laporan Smart City Report) Tj ET',
-      `BT /F1 10 Tf 36 535 Td (Tanggal export: ${escapePdfText(exportDate)}) Tj ET`,
-      `BT /F1 10 Tf 760 535 Td (Hal ${pageIndex + 1}/${pages.length}) Tj ET`
-    ];
-    let y = 500;
+  if (!rows.length) {
+    doc.text('Tidak ada data laporan untuk filter yang dipilih.');
+  }
 
-    commands.push(`BT /F1 9 Tf ${margin} ${y} Td (${escapePdfText(columns.map((column) => truncateText(column.label, column.max).padEnd(column.max)).join('  '))}) Tj ET`);
-    y -= rowHeight;
+  rows.forEach((row) => {
+    if (doc.y + rowHeight > doc.page.height - doc.page.margins.bottom) {
+      doc.addPage();
+      drawHeader();
+      doc.font('Helvetica').fontSize(8);
+    }
 
-    pageRows.forEach((row) => {
-      columns.forEach((column) => {
-        commands.push(`BT /F1 8 Tf ${column.x} ${y} Td (${escapePdfText(truncateText(row[column.key], column.max))}) Tj ET`);
+    const startY = doc.y;
+    let x = doc.x;
+
+    exportColumns.forEach((column, index) => {
+      doc.text(String(row[column.key] || '-'), x, startY, {
+        width: columnWidths[index],
+        height: rowHeight,
+        ellipsis: true
       });
-      y -= rowHeight;
+      x += columnWidths[index];
     });
 
-    const stream = commands.join('\n');
-    const contentId = addObject(`<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}\nendstream`);
-    const pageId = addObject(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${fontId} 0 R >> >> /Contents ${contentId} 0 R >>`);
-    pageIds.push(pageId);
+    doc.y = startY + rowHeight;
   });
 
-  objects[catalogId - 1] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
-  objects[pagesId - 1] = `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pageIds.length} >>`;
+  doc.end();
+};
 
-  let pdf = '%PDF-1.4\n';
-  const offsets = [0];
+const writeReportsExcel = async (res, rows) => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Laporan');
 
-  objects.forEach((object, index) => {
-    offsets.push(Buffer.byteLength(pdf));
-    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  worksheet.columns = exportColumns.map((column) => ({
+    header: column.header,
+    key: column.key,
+    width: column.width
+  }));
+
+  worksheet.getRow(1).font = { bold: true };
+  worksheet.getRow(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFE2F3E8' }
+  };
+
+  rows.forEach((row) => worksheet.addRow(row));
+
+  worksheet.columns.forEach((column) => {
+    let maxLength = String(column.header || '').length;
+
+    column.eachCell({ includeEmpty: true }, (cell) => {
+      maxLength = Math.max(maxLength, String(cell.value || '').length);
+    });
+
+    column.width = Math.min(Math.max(maxLength + 2, column.width || 10), 50);
   });
 
-  const xrefOffset = Buffer.byteLength(pdf);
-  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
-  offsets.slice(1).forEach((offset) => {
-    pdf += `${String(offset).padStart(10, '0')} 00000 n \n`;
-  });
-  pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogId} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
-
-  return Buffer.from(pdf);
-};
-
-const getCrcTable = () => {
-  const table = [];
-
-  for (let i = 0; i < 256; i += 1) {
-    let value = i;
-
-    for (let j = 0; j < 8; j += 1) {
-      value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
-    }
-
-    table.push(value >>> 0);
-  }
-
-  return table;
-};
-
-const crcTable = getCrcTable();
-
-const getCrc32 = (buffer) => {
-  let crc = 0xffffffff;
-
-  for (const byte of buffer) {
-    crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
-  }
-
-  return (crc ^ 0xffffffff) >>> 0;
-};
-
-const escapeXml = (value) => String(value || '')
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;')
-  .replace(/'/g, '&apos;');
-
-const getExcelColumnName = (index) => {
-  let name = '';
-  let current = index;
-
-  while (current > 0) {
-    const remainder = (current - 1) % 26;
-    name = String.fromCharCode(65 + remainder) + name;
-    current = Math.floor((current - 1) / 26);
-  }
-
-  return name;
-};
-
-const buildZipBuffer = (files) => {
-  const localParts = [];
-  const centralParts = [];
-  let offset = 0;
-
-  files.forEach((file) => {
-    const nameBuffer = Buffer.from(file.name);
-    const contentBuffer = Buffer.from(file.content);
-    const crc = getCrc32(contentBuffer);
-    const localHeader = Buffer.alloc(30);
-
-    localHeader.writeUInt32LE(0x04034b50, 0);
-    localHeader.writeUInt16LE(20, 4);
-    localHeader.writeUInt16LE(0, 6);
-    localHeader.writeUInt16LE(0, 8);
-    localHeader.writeUInt16LE(0, 10);
-    localHeader.writeUInt16LE(0, 12);
-    localHeader.writeUInt32LE(crc, 14);
-    localHeader.writeUInt32LE(contentBuffer.length, 18);
-    localHeader.writeUInt32LE(contentBuffer.length, 22);
-    localHeader.writeUInt16LE(nameBuffer.length, 26);
-    localHeader.writeUInt16LE(0, 28);
-
-    localParts.push(localHeader, nameBuffer, contentBuffer);
-
-    const centralHeader = Buffer.alloc(46);
-    centralHeader.writeUInt32LE(0x02014b50, 0);
-    centralHeader.writeUInt16LE(20, 4);
-    centralHeader.writeUInt16LE(20, 6);
-    centralHeader.writeUInt16LE(0, 8);
-    centralHeader.writeUInt16LE(0, 10);
-    centralHeader.writeUInt16LE(0, 12);
-    centralHeader.writeUInt16LE(0, 14);
-    centralHeader.writeUInt32LE(crc, 16);
-    centralHeader.writeUInt32LE(contentBuffer.length, 20);
-    centralHeader.writeUInt32LE(contentBuffer.length, 24);
-    centralHeader.writeUInt16LE(nameBuffer.length, 28);
-    centralHeader.writeUInt16LE(0, 30);
-    centralHeader.writeUInt16LE(0, 32);
-    centralHeader.writeUInt16LE(0, 34);
-    centralHeader.writeUInt16LE(0, 36);
-    centralHeader.writeUInt32LE(0, 38);
-    centralHeader.writeUInt32LE(offset, 42);
-
-    centralParts.push(centralHeader, nameBuffer);
-    offset += localHeader.length + nameBuffer.length + contentBuffer.length;
-  });
-
-  const centralDirectory = Buffer.concat(centralParts);
-  const endRecord = Buffer.alloc(22);
-
-  endRecord.writeUInt32LE(0x06054b50, 0);
-  endRecord.writeUInt16LE(0, 4);
-  endRecord.writeUInt16LE(0, 6);
-  endRecord.writeUInt16LE(files.length, 8);
-  endRecord.writeUInt16LE(files.length, 10);
-  endRecord.writeUInt32LE(centralDirectory.length, 12);
-  endRecord.writeUInt32LE(offset, 16);
-  endRecord.writeUInt16LE(0, 20);
-
-  return Buffer.concat([...localParts, centralDirectory, endRecord]);
-};
-
-const buildReportsXlsxBuffer = (rows) => {
-  const headers = ['No', 'Judul', 'Kategori', 'Pelapor', 'Status', 'Tanggal'];
-  const keys = ['no', 'title', 'category', 'reporter', 'status', 'createdAt'];
-  const allRows = [headers, ...rows.map((row) => keys.map((key) => row[key]))];
-  const columnWidths = headers.map((header, columnIndex) => {
-    const maxLength = Math.max(...allRows.map((row) => String(row[columnIndex] || '').length));
-    return Math.min(Math.max(maxLength + 2, 10), 50);
-  });
-  const colsXml = columnWidths
-    .map((width, index) => `<col min="${index + 1}" max="${index + 1}" width="${width}" customWidth="1"/>`)
-    .join('');
-  const rowsXml = allRows.map((row, rowIndex) => {
-    const cells = row.map((value, columnIndex) => {
-      const cellRef = `${getExcelColumnName(columnIndex + 1)}${rowIndex + 1}`;
-      const style = rowIndex === 0 ? ' s="1"' : '';
-
-      return `<c r="${cellRef}" t="inlineStr"${style}><is><t>${escapeXml(value)}</t></is></c>`;
-    }).join('');
-
-    return `<row r="${rowIndex + 1}">${cells}</row>`;
-  }).join('');
-  const files = [
-    {
-      name: '[Content_Types].xml',
-      content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'
-    },
-    {
-      name: '_rels/.rels',
-      content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'
-    },
-    {
-      name: 'xl/workbook.xml',
-      content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Laporan" sheetId="1" r:id="rId1"/></sheets></workbook>'
-    },
-    {
-      name: 'xl/_rels/workbook.xml.rels',
-      content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'
-    },
-    {
-      name: 'xl/styles.xml',
-      content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE2F3E8"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf fontId="0" fillId="0" borderId="0" xfId="0"/><xf fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>'
-    },
-    {
-      name: 'xl/worksheets/sheet1.xml',
-      content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>${colsXml}</cols><sheetData>${rowsXml}</sheetData></worksheet>`
-    }
-  ];
-
-  return buildZipBuffer(files);
+  await workbook.xlsx.write(res);
 };
 
 const getPetugasList = async (userSupabase) => {
@@ -554,12 +395,9 @@ exports.exportReportsPDF = async (req, res) => {
     const rows = getReportExportRows(reports);
     const dateStamp = getExportDateStamp();
     const filename = `laporan-smart-city-${dateStamp}.pdf`;
-    const pdfBuffer = buildReportsPdfBuffer(rows);
-
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', pdfBuffer.length);
-    return res.end(pdfBuffer);
+    return writeReportsPdf(res, rows);
   } catch (error) {
     req.flash('error', `Gagal export PDF: ${error.message}`);
     return res.redirect(`/admin/reports?${buildReportExportQueryString(getReportFilters(req.query))}`);
@@ -574,12 +412,10 @@ exports.exportReportsExcel = async (req, res) => {
     const rows = getReportExportRows(reports);
     const dateStamp = getExportDateStamp();
     const filename = `laporan-smart-city-${dateStamp}.xlsx`;
-    const xlsxBuffer = buildReportsXlsxBuffer(rows);
-
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', xlsxBuffer.length);
-    return res.end(xlsxBuffer);
+    await writeReportsExcel(res, rows);
+    return res.end();
   } catch (error) {
     req.flash('error', `Gagal export Excel: ${error.message}`);
     return res.redirect(`/admin/reports?${buildReportExportQueryString(getReportFilters(req.query))}`);
