@@ -8,10 +8,10 @@
       <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Manajemen Laporan</p>
-          <h1 class="mt-2 text-3xl font-bold text-slate-950">Semua Laporan</h1>
-          <p class="mt-2 text-slate-600">Filter laporan berdasarkan status, kategori, atau judul laporan.</p>
+          <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Semua Laporan</h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-400">Filter laporan berdasarkan status, kategori, atau judul laporan.</p>
         </div>
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 shadow-sm">
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 shadow-sm dark:border-emerald-900 dark:bg-emerald-950/30">
           <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Export / Simpan Data</p>
           <div class="flex flex-wrap gap-2">
             <a href="/admin/reports/export/excel<%= exportQuery ? `?${exportQuery}` : '' %>" class="inline-flex items-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
@@ -28,11 +28,11 @@
         </div>
       <% } %>
 
-      <form action="/admin/reports" method="GET" class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <form action="/admin/reports" method="GET" class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
         <div class="grid gap-4 md:grid-cols-[1fr_1fr_1.4fr_auto] md:items-end">
           <div>
-            <label for="status" class="mb-2 block text-sm font-medium text-slate-700">Status</label>
-            <select id="status" name="status" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+            <label for="status" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Status</label>
+            <select id="status" name="status" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100">
               <option value="">Semua status</option>
               <% statusList.forEach((status) => { %>
                 <% const meta = getStatusMeta(status); %>
@@ -42,8 +42,8 @@
           </div>
 
           <div>
-            <label for="category" class="mb-2 block text-sm font-medium text-slate-700">Kategori</label>
-            <select id="category" name="category" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+            <label for="category" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Kategori</label>
+            <select id="category" name="category" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100">
               <option value="">Semua kategori</option>
               <% categories.forEach((category) => { %>
                 <option value="<%= category.id %>" <%= filters.category === category.id ? 'selected' : '' %>><%= category.icon ? `${category.icon} ` : '' %><%= category.name %></option>
@@ -52,50 +52,50 @@
           </div>
 
           <div>
-            <label for="search" class="mb-2 block text-sm font-medium text-slate-700">Cari Judul</label>
-            <input id="search" name="search" type="search" value="<%= filters.search %>" placeholder="Masukkan kata kunci judul" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+            <label for="search" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Cari Judul</label>
+            <input id="search" name="search" type="search" value="<%= filters.search %>" placeholder="Masukkan kata kunci judul" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100">
           </div>
 
           <div class="flex gap-2">
             <button type="submit" class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">Filter</button>
-            <a href="/admin/reports" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Reset</a>
+            <a href="/admin/reports" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800">Reset</a>
           </div>
         </div>
       </form>
 
       <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900 shadow-sm">
         <div class="hidden overflow-x-auto lg:block">
-          <table class="min-w-full divide-y divide-slate-200">
-            <thead class="bg-slate-50">
+          <table class="min-w-full divide-y divide-slate-200 dark:divide-gray-800">
+            <thead class="bg-slate-50 dark:bg-gray-800/50">
               <tr>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Laporan</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Pelapor</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Petugas</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Kategori</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Tanggal</th>
-                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Aksi</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Laporan</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Pelapor</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Petugas</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Kategori</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Tanggal</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Aksi</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200">
+            <tbody class="divide-y divide-slate-200 dark:divide-gray-800">
               <% reports.forEach((report) => { %>
                 <% const meta = getStatusMeta(report.status); %>
-                <tr class="transition hover:bg-indigo-50/40">
+                <tr class="transition hover:bg-indigo-50/40 dark:hover:bg-gray-800/50">
                   <td class="px-4 py-4">
                     <div class="flex items-center gap-3">
-                      <div class="h-14 w-20 overflow-hidden rounded-xl bg-slate-100">
+                      <div class="h-14 w-20 overflow-hidden rounded-xl bg-slate-100 dark:bg-gray-800">
                         <% if (report.photo_url) { %>
                           <img src="<%= report.photo_url %>" alt="<%= report.title %>" class="h-full w-full object-cover">
                         <% } %>
                       </div>
-                      <p class="max-w-xs font-medium text-slate-950"><%= report.title %></p>
+                      <p class="max-w-xs font-medium text-slate-950 dark:text-white"><%= report.title %></p>
                     </div>
                   </td>
-                  <td class="px-4 py-4 text-sm text-slate-600"><%= report.profiles?.full_name || 'Tidak diketahui' %></td>
-                  <td class="px-4 py-4 text-sm text-slate-600"><%= report.assignedProfile?.full_name || 'Belum ditugaskan' %></td>
-                  <td class="px-4 py-4 text-sm text-slate-600"><%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || '-' %></td>
+                  <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-400"><%= report.profiles?.full_name || 'Tidak diketahui' %></td>
+                  <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-400"><%= report.assignedProfile?.full_name || 'Belum ditugaskan' %></td>
+                  <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-400"><%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || '-' %></td>
                   <td class="px-4 py-4"><span class="rounded-full border px-2.5 py-1 text-xs font-semibold <%= meta.className %>"><%= meta.label %></span></td>
-                  <td class="px-4 py-4 text-sm text-slate-600"><%= formatDate(report.created_at) %></td>
+                  <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-400"><%= formatDate(report.created_at) %></td>
                   <td class="px-4 py-4 text-right"><a href="/reports/<%= report.id %>" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700">Lihat Detail</a></td>
                 </tr>
               <% }) %>
@@ -106,21 +106,21 @@
         <div class="grid gap-4 p-4 lg:hidden">
           <% reports.forEach((report) => { %>
             <% const meta = getStatusMeta(report.status); %>
-            <article class="rounded-xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+            <article class="rounded-xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-800">
               <div class="mb-3 flex gap-3">
-                <div class="h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                <div class="h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-gray-800">
                   <% if (report.photo_url) { %>
                     <img src="<%= report.photo_url %>" alt="<%= report.title %>" class="h-full w-full object-cover">
                   <% } %>
                 </div>
                 <div>
-                  <h2 class="font-semibold text-slate-950"><%= report.title %></h2>
-                  <p class="mt-1 text-sm text-slate-500"><%= formatDate(report.created_at) %></p>
+                  <h2 class="font-semibold text-slate-950 dark:text-white"><%= report.title %></h2>
+                  <p class="mt-1 text-sm text-slate-500 dark:text-slate-400"><%= formatDate(report.created_at) %></p>
                 </div>
               </div>
-              <div class="space-y-2 text-sm text-slate-600">
-                <p>Pelapor: <span class="font-medium text-slate-900"><%= report.profiles?.full_name || 'Tidak diketahui' %></span></p>
-                <p>Petugas: <span class="font-medium text-slate-900"><%= report.assignedProfile?.full_name || 'Belum ditugaskan' %></span></p>
+              <div class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                <p>Pelapor: <span class="font-medium text-slate-900 dark:text-slate-200"><%= report.profiles?.full_name || 'Tidak diketahui' %></span></p>
+                <p>Petugas: <span class="font-medium text-slate-900 dark:text-slate-200"><%= report.assignedProfile?.full_name || 'Belum ditugaskan' %></span></p>
                 <p>Kategori: <%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || '-' %></p>
                 <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold <%= meta.className %>"><%= meta.label %></span>
               </div>
@@ -133,12 +133,12 @@
           <% const hasActiveFilter = filters.status || filters.category || filters.search; %>
           <div class="px-6 py-14 text-center">
             <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-indigo-600 dark:text-indigo-400"><% if (hasActiveFilter) { %><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg><% } else { %><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7V3Z"/><path d="M14 3v5h5M9 13h6M9 17h4" stroke-linecap="round"/></svg><% } %></div>
-            <h2 class="text-lg font-semibold text-slate-950"><%= hasActiveFilter ? 'Hasil filter kosong' : 'Belum ada laporan masuk' %></h2>
-            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+            <h2 class="text-lg font-semibold text-slate-950 dark:text-white"><%= hasActiveFilter ? 'Hasil filter kosong' : 'Belum ada laporan masuk' %></h2>
+            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">
               <%= hasActiveFilter ? 'Tidak ada laporan yang cocok dengan filter saat ini. Coba reset filter atau gunakan kata kunci lain.' : 'Saat warga mulai mengirim laporan, daftar laporan akan tampil di sini untuk ditinjau admin atau petugas.' %>
             </p>
             <% if (hasActiveFilter) { %>
-              <a href="/admin/reports" class="mt-5 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Reset Filter</a>
+              <a href="/admin/reports" class="mt-5 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800">Reset Filter</a>
             <% } %>
           </div>
         <% } %>

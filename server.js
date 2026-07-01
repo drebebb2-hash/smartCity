@@ -14,6 +14,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const infoRouter = require('./routes/infoRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,6 +50,27 @@ app.use(async (req, res, next) => {
     const userSupabase = createRequestClient(req.session.access_token);
 
     if (userSupabase) {
+      // 1. Ambil data profil terbaru dari database agar res.locals.currentUser selalu sinkron
+      const { data: dbProfile } = await userSupabase
+        .from('profiles')
+        .select('full_name, role, avatar_url')
+        .eq('id', req.session.user.id)
+        .single();
+
+      if (dbProfile) {
+        res.locals.currentUser = {
+          ...req.session.user,
+          full_name: dbProfile.full_name,
+          role: dbProfile.role,
+          avatar_url: dbProfile.avatar_url
+        };
+        // Sinkronkan juga ke session
+        req.session.user.full_name = dbProfile.full_name;
+        req.session.user.role = dbProfile.role;
+        req.session.user.avatar_url = dbProfile.avatar_url;
+      }
+
+      // 2. Ambil jumlah notifikasi yang belum dibaca
       const { count, error } = await userSupabase
         .from('notifications')
         .select('id', { count: 'exact', head: true })
@@ -71,6 +93,7 @@ app.use('/', dashboardRoutes);
 app.use('/', reportRoutes);
 app.use('/', notificationRoutes);
 app.use('/', infoRouter);
+app.use('/', profileRoutes);
 
 app.use((req, res) => {
   res.status(404).render('errors/404', {

@@ -1,0 +1,182 @@
+<%- include('partials/header', { title }) %>
+
+<main class="animate-fadeIn bg-gradient-to-br from-slate-50 to-indigo-50 px-4 py-10 dark:from-gray-900 dark:to-gray-800">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-8">
+      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Akun Saya</p>
+      <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Profil Pengguna</h1>
+      <p class="mt-2 max-w-2xl text-slate-600 dark:text-slate-400">Kelola informasi pribadi, foto profil, dan keamanan akun Anda.</p>
+    </div>
+
+    <!-- Layout Grid -->
+    <div class="grid gap-8 lg:grid-cols-[1fr_2fr]">
+      
+      <!-- Kolom Kiri: Ringkasan Profil -->
+      <div class="space-y-6">
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="relative mx-auto mb-6 flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-indigo-50 bg-indigo-600 shadow-inner dark:border-gray-700">
+            <% if (profile.avatar_url) { %>
+              <img src="<%= profile.avatar_url %>" alt="Avatar <%= profile.full_name %>" class="h-full w-full object-cover">
+            <% } else { %>
+              <span class="text-4xl font-extrabold text-white"><%= (profile.full_name || email || 'U').slice(0, 1).toUpperCase() %></span>
+            <% } %>
+          </div>
+
+          <h2 class="text-xl font-bold text-slate-950 dark:text-white"><%= profile.full_name || '-' %></h2>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400"><%= email %></p>
+
+          <div class="mt-4 flex flex-wrap justify-center gap-2">
+            <% if (profile.role === 'admin') { %>
+              <span class="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 ring-1 ring-inset ring-rose-600/10 dark:bg-rose-900/30 dark:text-rose-400">
+                <svg class="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
+                Administrator
+              </span>
+            <% } else if (profile.role === 'petugas') { %>
+              <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 ring-1 ring-inset ring-blue-600/10 dark:bg-blue-900/30 dark:text-blue-400">
+                <svg class="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+                Petugas Kota
+              </span>
+            <% } else { %>
+              <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 ring-1 ring-inset ring-emerald-600/10 dark:bg-emerald-900/30 dark:text-emerald-400">
+                <svg class="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>
+                Warga Kota
+              </span>
+            <% } %>
+          </div>
+
+          <div class="mt-6 border-t border-slate-100 pt-6 text-left dark:border-gray-700">
+            <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+              <span>Bergabung sejak:</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200"><%= formatDate(profile.created_at) %></span>
+            </div>
+            <% if (profile.phone) { %>
+              <div class="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                <span>No. Telepon:</span>
+                <span class="font-semibold text-slate-800 dark:text-slate-200"><%= profile.phone %></span>
+              </div>
+            <% } %>
+          </div>
+        </section>
+      </div>
+
+      <!-- Kolom Kanan: Edit Profil dan Ganti Password -->
+      <div class="space-y-8">
+        
+        <!-- Form Edit Profil -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="mb-6 flex items-center gap-3">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+            </span>
+            <div>
+              <h2 class="text-xl font-bold text-slate-950 dark:text-white">Ubah Data Profil</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Perbarui nama lengkap, nomor telepon, dan foto avatar profil Anda.</p>
+            </div>
+          </div>
+
+          <form action="/profile" method="POST" enctype="multipart/form-data" class="space-y-5">
+            <div>
+              <label for="full_name" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Nama Lengkap</label>
+              <input id="full_name" name="full_name" type="text" required value="<%= profile.full_name || '' %>" class="w-full rounded-lg border-2 border-gray-200 px-4 py-3 dark:border-gray-700 dark:bg-gray-900 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 dark:text-slate-100">
+            </div>
+
+            <div>
+              <label for="phone" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Nomor Telepon</label>
+              <input id="phone" name="phone" type="tel" value="<%= profile.phone || '' %>" placeholder="Contoh: 081234567890" class="w-full rounded-lg border-2 border-gray-200 px-4 py-3 dark:border-gray-700 dark:bg-gray-900 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 dark:text-slate-100">
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Foto Avatar Baru</label>
+              <div class="mt-1 flex items-center gap-4">
+                <div id="avatarPreviewContainer" class="hidden shrink-0">
+                  <img id="avatarPreview" src="#" alt="Pratinjau foto" class="h-16 w-16 rounded-full object-cover border border-slate-200 dark:border-gray-700">
+                </div>
+                <input id="avatar" name="avatar" type="file" accept="image/*" class="w-full rounded-lg border-2 border-gray-200 px-4 py-3 dark:border-gray-700 dark:bg-gray-900 text-sm outline-none file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 dark:file:bg-gray-800 dark:file:text-indigo-400 hover:file:bg-indigo-100 dark:text-slate-400">
+              </div>
+              <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Format gambar (JPEG, PNG, WEBP), maksimal 2 MB.</p>
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" class="w-full sm:w-auto rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-indigo-700 active:scale-95">
+                Simpan Perubahan
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Form Ganti Password -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+          <div class="mb-6 flex items-center gap-3">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+            </span>
+            <div>
+              <h2 class="text-xl font-bold text-slate-950 dark:text-white">Ganti Password</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Demi keamanan akun, gunakan password yang kuat dan unik.</p>
+            </div>
+          </div>
+
+          <form action="/profile/password" method="POST" class="space-y-5">
+            <div>
+              <label for="password" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Password Baru</label>
+              <input id="password" name="password" type="password" required class="w-full rounded-lg border-2 border-gray-200 px-4 py-3 dark:border-gray-700 dark:bg-gray-900 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 dark:text-slate-100">
+            </div>
+
+            <div>
+              <label for="confirm_password" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Konfirmasi Password Baru</label>
+              <input id="confirm_password" name="confirm_password" type="password" required class="w-full rounded-lg border-2 border-gray-200 px-4 py-3 dark:border-gray-700 dark:bg-gray-900 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950 dark:text-slate-100">
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" class="w-full sm:w-auto rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-indigo-700 active:scale-95">
+                Perbarui Password
+              </button>
+            </div>
+          </form>
+        </section>
+
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+  (() => {
+    // Preview Avatar Image
+    const avatarInput = document.getElementById('avatar');
+    const previewContainer = document.getElementById('avatarPreviewContainer');
+    const previewImage = document.getElementById('avatarPreview');
+
+    if (avatarInput && previewContainer && previewImage) {
+      avatarInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          if (!file.type.startsWith('image/')) {
+            alert('Silakan pilih file gambar yang valid.');
+            avatarInput.value = '';
+            previewContainer.classList.add('hidden');
+            return;
+          }
+          if (file.size > 2 * 1024 * 1024) {
+            alert('Ukuran gambar maksimal adalah 2 MB.');
+            avatarInput.value = '';
+            previewContainer.classList.add('hidden');
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            previewImage.src = event.target.result;
+            previewContainer.classList.remove('hidden');
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewContainer.classList.add('hidden');
+        }
+      });
+    }
+  })();
+</script>
+
+<%- include('partials/footer') %>

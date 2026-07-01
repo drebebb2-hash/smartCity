@@ -11,25 +11,25 @@
 
   <section class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
     <div class="space-y-6">
-      <article class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-        <div class="bg-slate-100">
+      <article class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div class="bg-slate-100 dark:bg-gray-850">
           <% if (report.photo_url) { %>
             <img src="<%= report.photo_url %>" alt="<%= report.title %>" class="max-h-[520px] w-full object-cover">
           <% } else { %>
-            <div class="flex h-80 items-center justify-center text-slate-400">Tidak ada foto</div>
+            <div class="flex h-80 items-center justify-center text-slate-400 dark:text-slate-500">Tidak ada foto</div>
           <% } %>
         </div>
         <div class="space-y-5 p-6">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p class="text-sm text-slate-500">
+              <p class="text-sm text-slate-500 dark:text-slate-400">
                 <%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || 'Tanpa kategori' %>
               </p>
-              <h1 class="mt-2 text-3xl font-bold text-slate-950"><%= report.title %></h1>
+              <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white"><%= report.title %></h1>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <form action="/reports/<%= report.id %>/upvote" method="POST">
-                <button type="submit" class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition <%= hasUpvoted ? 'border-rose-200 bg-rose-600 text-white hover:bg-rose-700' : 'border-slate-300 bg-white text-slate-700 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700' %>">
+                <button type="submit" class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition <%= hasUpvoted ? 'border-rose-200 bg-rose-600 text-white hover:bg-rose-700 dark:border-rose-800' : 'border-slate-300 bg-white text-slate-700 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-300 dark:hover:border-rose-900 dark:hover:bg-rose-950/30' %>">
                   <span aria-hidden="true"><%= hasUpvoted ? '♥' : '♡' %></span>
                   <span><%= upvoteCount %></span>
                 </button>
@@ -39,44 +39,44 @@
           </div>
 
           <div>
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Deskripsi</h2>
-            <p class="mt-2 whitespace-pre-line leading-7 text-slate-700"><%= report.description %></p>
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Deskripsi</h2>
+            <p class="mt-2 whitespace-pre-line leading-7 text-slate-700 dark:text-slate-300"><%= report.description %></p>
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2">
-            <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Dibuat</p>
-              <p class="mt-1 text-sm font-medium text-slate-900"><%= formatDate(report.created_at) %></p>
+            <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-gray-800 dark:bg-gray-800/40">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Dibuat</p>
+              <p class="mt-1 text-sm font-medium text-slate-900 dark:text-slate-200"><%= formatDate(report.created_at) %></p>
             </div>
-            <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Alamat</p>
-              <p class="mt-1 text-sm font-medium text-slate-900"><%= report.address || 'Tidak ada keterangan alamat' %></p>
+            <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-gray-800 dark:bg-gray-800/40">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Alamat</p>
+              <p class="mt-1 text-sm font-medium text-slate-900 dark:text-slate-200"><%= report.address || 'Tidak ada keterangan alamat' %></p>
             </div>
           </div>
         </div>
       </article>
 
-      <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 class="text-lg font-semibold text-slate-950">Lokasi</h2>
-        <p class="mt-1 text-sm text-slate-500"><%= report.latitude %>, <%= report.longitude %></p>
-        <div id="detailMap" class="mt-4 h-80 overflow-hidden rounded-lg border border-slate-300"></div>
+      <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <h2 class="text-lg font-semibold text-slate-950 dark:text-white">Lokasi</h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400"><%= report.latitude %>, <%= report.longitude %></p>
+        <div id="detailMap" class="mt-4 h-80 overflow-hidden rounded-lg border border-slate-300 dark:border-gray-700"></div>
       </section>
 
       <% if (currentUser && currentUser.role === 'admin') { %>
-        <section class="rounded-lg border border-blue-200 bg-blue-50 p-6 shadow-sm">
+        <section class="rounded-lg border border-blue-200 bg-blue-50 p-6 shadow-sm dark:border-blue-900 dark:bg-blue-950/20">
           <div class="mb-5">
-            <p class="text-sm font-semibold uppercase tracking-wide text-blue-700">Assignment</p>
-            <h2 class="mt-1 text-lg font-semibold text-slate-950">Assign Petugas</h2>
-            <p class="mt-1 text-sm text-slate-600">
+            <p class="text-sm font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400">Assignment</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Assign Petugas</h2>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
               Petugas saat ini:
-              <span class="font-semibold text-slate-900"><%= assignedPetugas ? assignedPetugas.full_name : 'Belum ditugaskan' %></span>
+              <span class="font-semibold text-slate-900 dark:text-white"><%= assignedPetugas ? assignedPetugas.full_name : 'Belum ditugaskan' %></span>
             </p>
           </div>
 
           <form action="/admin/reports/<%= report.id %>/assign" method="POST" class="space-y-4">
             <div>
-              <label for="petugas_id" class="mb-2 block text-sm font-medium text-slate-700">Pilih Petugas</label>
-              <select id="petugas_id" name="petugas_id" required class="w-full rounded-lg border border-blue-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+              <label for="petugas_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Pilih Petugas</label>
+              <select id="petugas_id" name="petugas_id" required class="w-full rounded-lg border border-blue-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100 dark:focus:border-blue-900">
                 <option value="">Pilih petugas</option>
                 <% petugasList.forEach((petugas) => { %>
                   <option value="<%= petugas.id %>" <%= report.assigned_to === petugas.id ? 'selected' : '' %>><%= petugas.full_name || petugas.id %></option>
@@ -95,51 +95,51 @@
 
       <% if (currentUser && report.user_id === currentUser.id) { %>
         <% if (report.status !== 'selesai') { %>
-          <section class="rounded-lg border border-slate-200 bg-slate-50 p-6 shadow-sm">
-            <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Rating Kepuasan</p>
-            <h2 class="mt-1 text-lg font-semibold text-slate-950">Rating belum tersedia</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Form rating akan muncul otomatis di sini setelah laporan Anda berstatus <span class="font-semibold">Selesai</span>.</p>
+          <section class="rounded-lg border border-slate-200 bg-slate-50 p-6 shadow-sm dark:border-gray-800 dark:bg-gray-800/40">
+            <p class="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Rating Kepuasan</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Rating belum tersedia</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Form rating akan muncul otomatis di sini setelah laporan Anda berstatus <span class="font-semibold">Selesai</span>.</p>
           </section>
         <% } else if (userRating) { %>
-          <section class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm">
-            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700">Rating Kepuasan</p>
-            <h2 class="mt-1 text-lg font-semibold text-slate-950">Terima kasih atas rating Anda</h2>
+          <section class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm dark:border-amber-900/30 dark:bg-amber-950/20">
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Rating Kepuasan</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Terima kasih atas rating Anda</h2>
             <div class="mt-4 flex items-center gap-2" aria-label="Rating <%= userRating.score %> dari 5">
               <% for (let star = 1; star <= 5; star += 1) { %>
-                <span class="text-2xl <%= star <= userRating.score ? 'text-amber-400' : 'text-slate-300' %>">★</span>
+                <span class="text-2xl <%= star <= userRating.score ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600' %>">★</span>
               <% } %>
-              <span class="ml-2 text-sm font-semibold text-slate-700"><%= userRating.score %>/5</span>
+              <span class="ml-2 text-sm font-semibold text-slate-700 dark:text-slate-300"><%= userRating.score %>/5</span>
             </div>
             <% if (userRating.feedback) { %>
-              <div class="mt-4 rounded-lg border border-amber-200 bg-white p-4">
-                <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">Feedback</p>
-                <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700"><%= userRating.feedback %></p>
+              <div class="mt-4 rounded-lg border border-amber-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                <p class="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Feedback</p>
+                <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700 dark:text-slate-300"><%= userRating.feedback %></p>
               </div>
             <% } %>
-            <p class="mt-3 text-xs text-amber-700">Dikirim pada <%= formatDate(userRating.created_at) %></p>
+            <p class="mt-3 text-xs text-amber-700 dark:text-amber-400 font-semibold">Dikirim pada <%= formatDate(userRating.created_at) %></p>
           </section>
         <% } else { %>
-          <section class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm">
-            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700">Rating Kepuasan</p>
-            <h2 class="mt-1 text-lg font-semibold text-slate-950">Bagaimana penanganan laporan Anda?</h2>
-            <p class="mt-1 text-sm text-slate-600">Berikan rating setelah laporan selesai agar admin bisa mengevaluasi kualitas penanganan.</p>
+          <section class="rounded-lg border border-amber-200 bg-amber-50 p-6 shadow-sm dark:border-amber-900/30 dark:bg-amber-950/20">
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Rating Kepuasan</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Bagaimana penanganan laporan Anda?</h2>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Berikan rating setelah laporan selesai agar admin bisa mengevaluasi kualitas penanganan.</p>
 
             <form action="/reports/<%= report.id %>/rating" method="POST" class="mt-5 space-y-4" data-rating-form>
               <input type="hidden" name="score" value="" data-rating-input>
 
               <div>
-                <p class="mb-2 block text-sm font-medium text-slate-700">Rating</p>
+                <p class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Rating</p>
                 <div class="flex gap-1" role="radiogroup" aria-label="Pilih rating kepuasan">
                   <% for (let star = 1; star <= 5; star += 1) { %>
-                    <button type="button" class="text-3xl text-slate-300 transition hover:scale-110 hover:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200" data-rating-star="<%= star %>" aria-label="<%= star %> bintang">★</button>
+                    <button type="button" class="text-3xl text-slate-300 transition hover:scale-110 hover:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 dark:text-slate-600" data-rating-star="<%= star %>" aria-label="<%= star %> bintang">★</button>
                   <% } %>
                 </div>
-                <p class="mt-2 text-sm text-slate-600" data-rating-label>Belum memilih rating.</p>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-400" data-rating-label>Belum memilih rating.</p>
               </div>
 
               <div>
-                <label for="feedback" class="mb-2 block text-sm font-medium text-slate-700">Feedback opsional</label>
-                <textarea id="feedback" name="feedback" rows="4" placeholder="Ceritakan pengalaman Anda atas penanganan laporan ini..." class="w-full resize-y rounded-lg border border-amber-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"></textarea>
+                <label for="feedback" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Feedback opsional</label>
+                <textarea id="feedback" name="feedback" rows="4" placeholder="Ceritakan pengalaman Anda atas penanganan laporan ini..." class="w-full resize-y rounded-lg border border-amber-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100 dark:focus:border-amber-900"></textarea>
               </div>
 
               <div class="flex justify-end">
@@ -153,17 +153,17 @@
       <% } %>
 
       <% if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'petugas')) { %>
-        <section class="rounded-lg border border-emerald-200 bg-indigo-50 p-6 shadow-sm">
+        <section class="rounded-lg border border-emerald-200 bg-indigo-50 p-6 shadow-sm dark:border-indigo-900 dark:bg-indigo-950/20">
           <div class="mb-5">
-            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Panel Petugas</p>
-            <h2 class="mt-1 text-lg font-semibold text-slate-950">Update Status Laporan</h2>
-            <p class="mt-1 text-sm text-slate-600">Perubahan status akan tersimpan ke riwayat dan mengirim notifikasi ke warga pelapor.</p>
+            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Panel Petugas</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-950 dark:text-white">Update Status Laporan</h2>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Perubahan status akan tersimpan ke riwayat dan mengirim notifikasi ke warga pelapor.</p>
           </div>
 
           <form action="/admin/reports/<%= report.id %>/status" method="POST" class="space-y-4">
             <div>
-              <label for="status" class="mb-2 block text-sm font-medium text-slate-700">Status Baru</label>
-              <select id="status" name="status" required class="w-full rounded-lg border border-emerald-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+              <label for="status" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Status Baru</label>
+              <select id="status" name="status" required class="w-full rounded-lg border border-emerald-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100 dark:focus:ring-emerald-900">
                 <option value="pending" <%= report.status === 'pending' ? 'selected' : '' %>>Pending</option>
                 <option value="diproses" <%= report.status === 'diproses' ? 'selected' : '' %>>Diproses</option>
                 <option value="selesai" <%= report.status === 'selesai' ? 'selected' : '' %>>Selesai</option>
@@ -172,8 +172,8 @@
             </div>
 
             <div>
-              <label for="note" class="mb-2 block text-sm font-medium text-slate-700">Catatan Progres</label>
-              <textarea id="note" name="note" rows="4" placeholder="Contoh: Petugas sudah menuju lokasi dan melakukan pengecekan." class="w-full resize-y rounded-lg border border-emerald-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"></textarea>
+              <label for="note" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Catatan Progres</label>
+              <textarea id="note" name="note" rows="4" placeholder="Contoh: Petugas sudah menuju lokasi dan melakukan pengecekan." class="w-full resize-y rounded-lg border border-emerald-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100 dark:focus:ring-emerald-900"></textarea>
             </div>
 
             <div class="flex justify-end">
@@ -185,18 +185,18 @@
         </section>
       <% } %>
 
-      <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
         <div class="mb-5 flex items-center justify-between gap-3">
           <div>
-            <h2 class="text-lg font-semibold text-slate-950">Komentar</h2>
-            <p class="mt-1 text-sm text-slate-500">Diskusi dan informasi tambahan terkait laporan ini.</p>
+            <h2 class="text-lg font-semibold text-slate-950 dark:text-white">Komentar</h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Diskusi dan informasi tambahan terkait laporan ini.</p>
           </div>
-          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"><%= comments.length %> komentar</span>
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-gray-800 dark:text-slate-300"><%= comments.length %> komentar</span>
         </div>
 
         <form action="/reports/<%= report.id %>/comments" method="POST" class="mb-6 space-y-3">
-          <label for="content" class="block text-sm font-medium text-slate-700">Tambah Komentar</label>
-          <textarea id="content" name="content" rows="4" required placeholder="Tulis komentar atau informasi tambahan..." class="w-full resize-y rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"></textarea>
+          <label for="content" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tambah Komentar</label>
+          <textarea id="content" name="content" rows="4" required placeholder="Tulis komentar atau informasi tambahan..." class="w-full resize-y rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100"></textarea>
           <div class="flex justify-end">
             <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
               Kirim Komentar
@@ -205,18 +205,18 @@
         </form>
 
         <% if (!comments.length) { %>
-          <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+          <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500 dark:border-gray-700 dark:bg-gray-800/40 dark:text-slate-400">
             Belum ada komentar.
           </div>
         <% } else { %>
           <div class="space-y-4">
             <% comments.forEach((comment) => { %>
-              <article class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <article class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-gray-800 dark:bg-gray-800/40">
                 <div class="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <p class="font-semibold text-slate-950"><%= comment.profiles?.full_name || 'Pengguna' %></p>
-                  <time class="text-xs text-slate-500"><%= formatDate(comment.created_at) %></time>
+                  <p class="font-semibold text-slate-950 dark:text-white"><%= comment.profiles?.full_name || 'Pengguna' %></p>
+                  <time class="text-xs text-slate-500 dark:text-slate-400"><%= formatDate(comment.created_at) %></time>
                 </div>
-                <p class="whitespace-pre-line text-sm leading-6 text-slate-700"><%= comment.content %></p>
+                <p class="whitespace-pre-line text-sm leading-6 text-slate-700 dark:text-slate-300"><%= comment.content %></p>
               </article>
             <% }) %>
           </div>
@@ -224,11 +224,11 @@
       </section>
     </div>
 
-    <aside class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-slate-950">Riwayat Status</h2>
+    <aside class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <h2 class="text-lg font-semibold text-slate-950 dark:text-white">Riwayat Status</h2>
 
       <% if (!history.length) { %>
-        <div class="mt-5 rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+        <div class="mt-5 rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500 dark:border-gray-700 dark:bg-gray-800/40 dark:text-slate-400">
           Belum ada riwayat perubahan status.
         </div>
       <% } else { %>
@@ -237,12 +237,12 @@
             <% const itemStatus = item.status || item.new_status || item.status_to || report.status; %>
             <% const itemNote = item.note || item.notes || item.description || item.comment || 'Tidak ada catatan.'; %>
             <% const itemStatusMeta = getStatusMeta(itemStatus); %>
-            <li class="relative border-l border-slate-200 pl-5">
-              <span class="absolute -left-2 top-0 h-4 w-4 rounded-full border-2 border-white bg-indigo-600 shadow"></span>
+            <li class="relative border-l border-slate-200 pl-5 dark:border-gray-700">
+              <span class="absolute -left-2 top-0 h-4 w-4 rounded-full border-2 border-white bg-indigo-600 shadow dark:border-gray-900"></span>
               <div class="space-y-2">
                 <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold <%= itemStatusMeta.className %>"><%= itemStatusMeta.label %></span>
-                <p class="text-sm font-medium text-slate-900"><%= formatDate(item.created_at) %></p>
-                <p class="text-sm leading-6 text-slate-600"><%= itemNote %></p>
+                <p class="text-sm font-medium text-slate-900 dark:text-slate-200"><%= formatDate(item.created_at) %></p>
+                <p class="text-sm leading-6 text-slate-600 dark:text-slate-400"><%= itemNote %></p>
               </div>
             </li>
           <% }) %>

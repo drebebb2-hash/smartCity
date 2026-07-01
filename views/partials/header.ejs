@@ -28,6 +28,16 @@
     .toast-in { animation: toastIn .28s ease-out; }
     body > main { flex: 1 0 auto; }
     body > footer { flex-shrink: 0; }
+    
+    /* Smooth transition for theme change */
+    html, body, nav, aside, section, article, div, input, select, textarea, button {
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+    }
+    
+    /* Leaflet Dark Mode Map Filter */
+    .dark .leaflet-container {
+      filter: invert(100%) hue-rotate(185deg) brightness(95%) contrast(90%);
+    }
   </style>
   <%- typeof extraHead !== 'undefined' ? extraHead : '' %>
   <script>
@@ -71,11 +81,15 @@
           </a>
           <div class="relative hidden sm:block" data-profile-menu>
             <button type="button" data-profile-toggle class="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 transition-all duration-200 hover:bg-slate-50 active:scale-95 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800">
-              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-xs font-bold text-white"><%= (currentUser.full_name || currentUser.email || 'U').slice(0, 1).toUpperCase() %></span>
+              <% if (currentUser.avatar_url) { %>
+                <img src="<%= currentUser.avatar_url %>" alt="Avatar <%= currentUser.full_name %>" class="h-8 w-8 rounded-full object-cover">
+              <% } else { %>
+                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-xs font-bold text-white"><%= (currentUser.full_name || currentUser.email || 'U').slice(0, 1).toUpperCase() %></span>
+              <% } %>
               <span class="max-w-[120px] truncate text-sm font-semibold text-slate-700 dark:text-slate-200"><%= currentUser.full_name || currentUser.email %></span>
             </button>
             <div data-profile-dropdown class="absolute right-0 mt-3 hidden w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-900">
-              <a href="/dashboard" class="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Profil</a>
+              <a href="/profile" class="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Profil</a>
               <a href="/reports/my" class="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Laporan Saya</a>
               <form action="/logout" method="POST"><button type="submit" class="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-gray-800">Logout</button></form>
             </div>

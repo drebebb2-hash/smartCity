@@ -159,7 +159,8 @@ exports.login = async (req, res) => {
       id: user.id,
       email: user.email,
       full_name: profile.full_name,
-      role: profile.role
+      role: profile.role,
+      avatar_url: profile.avatar_url
     };
 
     return req.session.save(() => {

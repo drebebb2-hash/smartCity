@@ -68,3 +68,33 @@ create policy "Admins can view all profiles"
 on public.profiles
 for select
 using (public.get_current_user_role() = 'admin');
+
+-- =========================================================================
+-- KEBIJAKAN PENYIMPANAN STORAGE BUCKET 'avatars'
+-- =========================================================================
+
+-- 1. Buat bucket 'avatars' jika belum ada
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
+on conflict (id) do update
+set public = true;
+
+-- 2. Kebijakan agar user terotentikasi bisa mengunggah avatar mereka sendiri (di bawah folder ID user)
+drop policy if exists "Users can upload own avatars" on storage.objects;
+create policy "Users can upload own avatars"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'avatars'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- 3. Kebijakan agar siapa saja bisa melihat avatar
+drop policy if exists "Anyone can view avatars" on storage.objects;
+create policy "Anyone can view avatars"
+on storage.objects
+for select
+to public
+using (bucket_id = 'avatars');
+

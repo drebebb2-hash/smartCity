@@ -7,8 +7,8 @@
     <section>
       <div class="mb-8">
         <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Ringkasan Sistem</p>
-        <h1 class="mt-2 text-3xl font-bold text-slate-950">Dashboard Admin</h1>
-        <p class="mt-2 text-slate-600">Pantau volume laporan dan status penanganan seluruh warga.</p>
+        <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Dashboard Admin</h1>
+        <p class="mt-2 text-slate-600 dark:text-slate-400">Pantau volume laporan dan status penanganan seluruh warga.</p>
       </div>
 
       <% if (error) { %>
@@ -18,15 +18,15 @@
       <% } %>
 
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
           <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg></div>
-          <p class="text-sm font-medium text-slate-500">Total Laporan</p>
-          <p class="mt-2 text-3xl font-bold text-slate-950"><%= stats.total %></p>
+          <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Laporan</p>
+          <p class="mt-2 text-3xl font-bold text-slate-950 dark:text-white"><%= stats.total %></p>
         </article>
 
         <% ['pending', 'diproses', 'selesai', 'ditolak'].forEach((status) => { %>
           <% const meta = getStatusMeta(status); %>
-          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
             <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border <%= meta.className %>">
               <% if (status === 'pending') { %>
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>
@@ -38,8 +38,8 @@
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg>
               <% } %>
             </div>
-            <p class="text-sm font-medium text-slate-500"><%= meta.label %></p>
-            <p class="mt-2 text-3xl font-bold text-slate-950"><%= stats[status] %></p>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400"><%= meta.label %></p>
+            <p class="mt-2 text-3xl font-bold text-slate-950 dark:text-white"><%= stats[status] %></p>
           </article>
         <% }) %>
       </div>
@@ -47,8 +47,8 @@
       <div class="mt-8 rounded-2xl border border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-6 shadow-sm">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 class="text-lg font-semibold text-slate-950">Kelola Laporan</h2>
-            <p class="mt-1 text-sm text-slate-500">Buka daftar lengkap laporan untuk filter dan pemeriksaan detail.</p>
+            <h2 class="text-lg font-semibold text-slate-950 dark:text-white">Kelola Laporan</h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Buka daftar lengkap laporan untuk filter dan pemeriksaan detail.</p>
           </div>
           <a href="/admin/reports" class="inline-flex rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">Lihat Semua Laporan</a>
         </div>

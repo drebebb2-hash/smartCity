@@ -7,8 +7,8 @@
     <section class="max-w-2xl">
       <div class="mb-8">
         <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Master Data</p>
-        <h1 class="mt-2 text-3xl font-bold text-slate-950"><%= mode === 'edit' ? 'Edit Kategori' : 'Tambah Kategori' %></h1>
-        <p class="mt-2 text-slate-600">Gunakan nama yang jelas agar warga mudah memilih kategori laporan.</p>
+        <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white"><%= mode === 'edit' ? 'Edit Kategori' : 'Tambah Kategori' %></h1>
+        <p class="mt-2 text-slate-600 dark:text-slate-400">Gunakan nama yang jelas agar warga mudah memilih kategori laporan.</p>
       </div>
 
       <% if (error) { %>
@@ -20,13 +20,13 @@
       <form action="<%= mode === 'edit' ? `/admin/categories/${category.id}?_method=PUT` : '/admin/categories' %>" method="POST" class="rounded-2xl border border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-6 shadow-sm">
         <div class="space-y-5">
           <div>
-            <label for="name" class="mb-2 block text-sm font-medium text-slate-700">Nama Kategori</label>
-            <input id="name" name="name" type="text" required value="<%= category.name || '' %>" placeholder="Contoh: Jalan Rusak" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+            <label for="name" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Nama Kategori</label>
+            <input id="name" name="name" type="text" required value="<%= category.name || '' %>" placeholder="Contoh: Jalan Rusak" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100">
           </div>
 
           <div>
-            <label for="icon" class="mb-2 block text-sm font-medium text-slate-700">Icon</label>
-            <select id="icon" name="icon" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+            <label for="icon" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Icon</label>
+            <select id="icon" name="icon" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100">
               <% ['🚧', '💡', '🗑️', '🌊', '🌳', '🚦', '🚌', '🏥', '🛡️', '📍'].forEach((icon) => { %>
                 <option value="<%= icon %>" <%= category.icon === icon ? 'selected' : '' %>><%= icon %></option>
               <% }) %>
@@ -34,7 +34,7 @@
           </div>
 
           <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <a href="/admin/categories" class="rounded-xl border border-slate-300 px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Batal</a>
+            <a href="/admin/categories" class="rounded-xl border border-slate-300 px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800">Batal</a>
             <button type="submit" class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
               <%= mode === 'edit' ? 'Simpan Perubahan' : 'Tambah Kategori' %>
             </button>

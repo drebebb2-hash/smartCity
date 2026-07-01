@@ -8,8 +8,8 @@
       <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Master Data</p>
-          <h1 class="mt-2 text-3xl font-bold text-slate-950">Kelola Kategori</h1>
-          <p class="mt-2 text-slate-600">Atur kategori masalah yang bisa dipilih warga saat membuat laporan.</p>
+          <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Kelola Kategori</h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-400">Atur kategori masalah yang bisa dipilih warga saat membuat laporan.</p>
         </div>
         <a href="/admin/categories/new" class="inline-flex rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">Tambah Kategori</a>
       </div>
@@ -22,26 +22,26 @@
 
       <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900 shadow-sm">
         <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-slate-200">
-            <thead class="bg-slate-50">
+          <table class="min-w-full divide-y divide-slate-200 dark:divide-gray-800">
+            <thead class="bg-slate-50 dark:bg-gray-800/50">
               <tr>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Kategori</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Icon</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Jumlah Laporan</th>
-                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Aksi</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Kategori</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Icon</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Jumlah Laporan</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Aksi</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200">
+            <tbody class="divide-y divide-slate-200 dark:divide-gray-800">
               <% categories.forEach((category) => { %>
-                <tr>
-                  <td class="px-4 py-4 font-medium text-slate-950"><%= category.name %></td>
-                  <td class="px-4 py-4 text-sm text-slate-600"><%= category.icon || '-' %></td>
-                  <td class="px-4 py-4 text-sm text-slate-600"><%= category.report_count %></td>
+                <tr class="transition hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                  <td class="px-4 py-4 font-medium text-slate-950 dark:text-white"><%= category.name %></td>
+                  <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-400"><%= category.icon || '-' %></td>
+                  <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-400"><%= category.report_count %></td>
                   <td class="px-4 py-4">
                     <div class="flex justify-end gap-2">
-                      <a href="/admin/categories/<%= category.id %>/edit" class="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Edit</a>
+                      <a href="/admin/categories/<%= category.id %>/edit" class="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800">Edit</a>
                       <form action="/admin/categories/<%= category.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
-                        <button type="submit" class="rounded-xl border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50">Hapus</button>
+                        <button type="submit" class="rounded-xl border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/30">Hapus</button>
                       </form>
                     </div>
                   </td>
@@ -53,8 +53,8 @@
 
         <% if (!categories.length) { %>
           <div class="px-6 py-12 text-center">
-            <h2 class="text-lg font-semibold text-slate-950">Belum ada kategori</h2>
-            <p class="mt-2 text-sm text-slate-500">Tambahkan kategori pertama untuk form laporan warga.</p>
+            <h2 class="text-lg font-semibold text-slate-950 dark:text-white">Belum ada kategori</h2>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Tambahkan kategori pertama untuk form laporan warga.</p>
           </div>
         <% } %>
       </section>
