@@ -1,0 +1,72 @@
+<%- include('../partials/header', { title }) %>
+
+<%
+  const emergencyContacts = [
+    { emoji: "🚔", name: "Polisi", number: "110", desc: "Laporan kriminal, kecelakaan, gangguan keamanan", color: "blue" },
+    { emoji: "🚒", name: "Pemadam Kebakaran", number: "113", desc: "Kebakaran gedung, hutan, atau kendaraan", color: "red" },
+    { emoji: "🚑", name: "Ambulans Darurat", number: "118", desc: "Kegawatdaruratan medis, kecelakaan", color: "rose" },
+    { emoji: "🏥", name: "Emergency Nasional", number: "119", desc: "Pusat komando darurat nasional terpadu", color: "pink" },
+    { emoji: "⚡", name: "PLN (Listrik)", number: "123", desc: "Gangguan listrik, pemadaman, bahaya instalasi", color: "yellow" },
+    { emoji: "💧", name: "PDAM (Air)", number: "1500-111", desc: "Gangguan air bersih, kebocoran pipa utama", color: "cyan" },
+    { emoji: "⛑️", name: "Basarnas (SAR)", number: "115", desc: "Pencarian dan penyelamatan, orang hilang", color: "orange" },
+    { emoji: "🌊", name: "BPBD (Bencana)", number: "117", desc: "Banjir, gempa, longsor dan bencana alam", color: "indigo" },
+    { emoji: "💉", name: "Posko Kesehatan", number: "119 ext 9", desc: "Hotline kesehatan dan informasi medis", color: "green" },
+    { emoji: "🚂", name: "Pengaduan Kemenhub", number: "151", desc: "Pengaduan transportasi umum, jalan, pelabuhan", color: "purple" },
+    { emoji: "⚖️", name: "Komnas HAM", number: "1500-777", desc: "Pelanggaran hak asasi manusia", color: "teal" },
+    { emoji: "🆘", name: "Nomor Tunggal Darurat", number: "112", desc: "Satu nomor untuk semua keadaan darurat", color: "red" }
+  ];
+  const colorClasses = {
+    blue: { border: 'border-l-blue-500', text: 'text-blue-600 dark:text-blue-400', button: 'bg-blue-600 hover:bg-blue-700' },
+    red: { border: 'border-l-red-500', text: 'text-red-600 dark:text-red-400', button: 'bg-red-600 hover:bg-red-700' },
+    rose: { border: 'border-l-rose-500', text: 'text-rose-600 dark:text-rose-400', button: 'bg-rose-600 hover:bg-rose-700' },
+    pink: { border: 'border-l-pink-500', text: 'text-pink-600 dark:text-pink-400', button: 'bg-pink-600 hover:bg-pink-700' },
+    yellow: { border: 'border-l-yellow-500', text: 'text-yellow-600 dark:text-yellow-400', button: 'bg-yellow-500 hover:bg-yellow-600' },
+    cyan: { border: 'border-l-cyan-500', text: 'text-cyan-600 dark:text-cyan-400', button: 'bg-cyan-600 hover:bg-cyan-700' },
+    orange: { border: 'border-l-orange-500', text: 'text-orange-600 dark:text-orange-400', button: 'bg-orange-600 hover:bg-orange-700' },
+    indigo: { border: 'border-l-indigo-500', text: 'text-indigo-600 dark:text-indigo-400', button: 'bg-indigo-600 hover:bg-indigo-700' },
+    green: { border: 'border-l-green-500', text: 'text-green-600 dark:text-green-400', button: 'bg-green-600 hover:bg-green-700' },
+    purple: { border: 'border-l-purple-500', text: 'text-purple-600 dark:text-purple-400', button: 'bg-purple-600 hover:bg-purple-700' },
+    teal: { border: 'border-l-teal-500', text: 'text-teal-600 dark:text-teal-400', button: 'bg-teal-600 hover:bg-teal-700' }
+  };
+%>
+
+<main class="min-h-screen bg-gray-50 pb-14 dark:bg-gray-900">
+  <section class="flex h-[200px] items-center justify-center bg-gradient-to-r from-red-600 to-rose-500 px-4 text-center text-white">
+    <div>
+      <div class="mb-3 text-6xl animate-pulse">🚨</div>
+      <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">Nomor Darurat Kota</h1>
+      <p class="mt-2 text-base font-semibold text-rose-50">Hubungi segera dalam situasi darurat</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mb-6 rounded-2xl border border-yellow-300 bg-yellow-100 p-4 text-center font-bold text-yellow-900 shadow-sm dark:border-yellow-700 dark:bg-yellow-950/60 dark:text-yellow-200">
+      ⚠️ Gunakan nomor darurat hanya untuk situasi mendesak. Penyalahgunaan dapat dikenakan sanksi hukum.
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <% emergencyContacts.forEach((contact) => { %>
+        <% const classes = colorClasses[contact.color] || colorClasses.red; %>
+        <% if (contact.number === '112') { %>
+          <article class="col-span-full rounded-3xl bg-gradient-to-r from-red-600 to-rose-500 p-6 text-center text-white shadow-xl transition-all duration-200 hover:-translate-y-1 hover:shadow-lg sm:p-8">
+            <div class="text-5xl"><%= contact.emoji %></div>
+            <h2 class="mt-3 text-2xl font-extrabold"><%= contact.name %></h2>
+            <p class="mt-2 text-5xl font-black tracking-tight"><%= contact.number %></p>
+            <p class="mx-auto mt-3 max-w-2xl text-sm font-semibold text-rose-50"><%= contact.desc %></p>
+            <a href="tel:<%= contact.number.replace(/\s+/g, '') %>" class="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-extrabold text-red-600 transition-all duration-200 hover:bg-rose-50 active:scale-95 sm:w-auto sm:min-w-72">📞 Hubungi Sekarang</a>
+          </article>
+        <% } else { %>
+          <article class="rounded-2xl border-l-4 <%= classes.border %> bg-white p-5 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:bg-gray-800">
+            <div class="text-4xl"><%= contact.emoji %></div>
+            <h2 class="mt-3 text-lg font-bold text-slate-950 dark:text-white"><%= contact.name %></h2>
+            <p class="mt-2 text-3xl font-black <%= classes.text %>"><%= contact.number %></p>
+            <p class="mt-2 min-h-10 text-sm leading-6 text-gray-500 dark:text-gray-400"><%= contact.desc %></p>
+            <a href="tel:<%= contact.number.replace(/\s+/g, '') %>" class="mt-5 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-bold text-white transition-all duration-200 active:scale-95 <%= classes.button %>">📞 Hubungi Sekarang</a>
+          </article>
+        <% } %>
+      <% }) %>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
