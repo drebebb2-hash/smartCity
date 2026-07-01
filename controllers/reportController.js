@@ -344,23 +344,6 @@ exports.getReportDetail = async (req, res) => {
       userRating = rating || null;
     }
 
-    let userRating = null;
-
-    if (report.user_id === req.session.user.id) {
-      const { data: rating, error: ratingError } = await userSupabase
-        .from('ratings')
-        .select('id, score, feedback, created_at')
-        .eq('report_id', report.id)
-        .eq('user_id', req.session.user.id)
-        .maybeSingle();
-
-      if (ratingError) {
-        throw new Error(ratingError.message);
-      }
-
-      userRating = rating || null;
-    }
-
     let petugasList = [];
     let assignedPetugas = null;
 
