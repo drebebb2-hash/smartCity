@@ -47,14 +47,68 @@
 
 <script>
   const events = [
-    { title: "Car Free Day", daysOfWeek: [0], color: "#10b981", description: "Setiap hari Minggu, jalan protokol bebas kendaraan bermotor. Nikmati udara segar bersama keluarga." },
-    { title: "Pasar Malam Rakyat", start: "2026-07-05", end: "2026-07-08", color: "#f59e0b", description: "Pasar malam rakyat dengan berbagai kuliner dan hiburan lokal selama 3 hari di alun-alun kota." },
-    { title: "Vaksinasi Gratis Puskesmas", start: "2026-07-10", color: "#3b82f6", description: "Vaksinasi gratis untuk seluruh warga. Bawa KTP dan datang ke puskesmas terdekat." },
-    { title: "Gotong Royong Kelurahan", start: "2026-07-12", color: "#8b5cf6", description: "Kegiatan gotong royong bersih-bersih lingkungan seluruh kelurahan. Wajib diikuti perwakilan tiap RT." },
-    { title: "Sosialisasi Smart City", start: "2026-07-15", color: "#ef4444", description: "Sosialisasi program Smart City kepada warga. Diselenggarakan di Gedung Serbaguna Kecamatan pukul 09.00." },
-    { title: "Festival Budaya Kota", start: "2026-07-20", end: "2026-07-23", color: "#f97316", description: "Festival budaya tahunan menampilkan kesenian daerah, pameran UMKM, dan pertunjukan musik selama 3 hari." },
-    { title: "Rapat Warga RW 05", start: "2026-07-25", color: "#06b6d4", description: "Rapat koordinasi warga RW 05 membahas program lingkungan dan keamanan. Pukul 19.00 di balai RW." },
-    { title: "Pemeriksaan Kesehatan Gratis", start: "2026-07-28", color: "#10b981", description: "Pemeriksaan kesehatan gratis meliputi tekanan darah, gula darah, dan konsultasi dokter umum." }
+    {
+      title: "🚗 Car Free Day",
+      start: "2026-07-05",
+      color: "#10b981",
+      description: "Jalan protokol bebas kendaraan bermotor. Nikmati udara segar bersama keluarga di pusat kota."
+    },
+    {
+      title: "🌙 Pasar Malam Rakyat",
+      start: "2026-07-05",
+      end: "2026-07-08",
+      color: "#f59e0b",
+      description: "Pasar malam rakyat dengan berbagai kuliner dan hiburan lokal selama 3 hari di alun-alun kota."
+    },
+    {
+      title: "💉 Vaksinasi Gratis",
+      start: "2026-07-10",
+      color: "#3b82f6",
+      description: "Vaksinasi gratis untuk seluruh warga. Bawa KTP dan datang ke puskesmas terdekat."
+    },
+    {
+      title: "🧹 Gotong Royong",
+      start: "2026-07-12",
+      color: "#8b5cf6",
+      description: "Gotong royong bersih-bersih lingkungan seluruh kelurahan. Wajib diikuti perwakilan tiap RT."
+    },
+    {
+      title: "🏙️ Sosialisasi Smart City",
+      start: "2026-07-15",
+      color: "#ef4444",
+      description: "Sosialisasi program Smart City kepada warga. Di Gedung Serbaguna Kecamatan pukul 09.00."
+    },
+    {
+      title: "🎭 Festival Budaya Kota",
+      start: "2026-07-20",
+      end: "2026-07-23",
+      color: "#f97316",
+      description: "Festival budaya tahunan: kesenian daerah, pameran UMKM, pertunjukan musik selama 3 hari."
+    },
+    {
+      title: "👥 Rapat Warga RW 05",
+      start: "2026-07-25",
+      color: "#06b6d4",
+      description: "Rapat koordinasi warga RW 05 membahas program lingkungan dan keamanan. Pukul 19.00 di balai RW."
+    },
+    {
+      title: "🏥 Cek Kesehatan Gratis",
+      start: "2026-07-28",
+      color: "#10b981",
+      description: "Pemeriksaan tekanan darah, gula darah, dan konsultasi dokter umum gratis untuk warga."
+    },
+    {
+      title: "📚 Pelatihan UMKM Digital",
+      start: "2026-07-08",
+      color: "#6366f1",
+      description: "Pelatihan digitalisasi usaha untuk pelaku UMKM kota. Pendaftaran di kantor kecamatan."
+    },
+    {
+      title: "🌳 Tanam Pohon Bersama",
+      start: "2026-07-18",
+      color: "#16a34a",
+      description: "Program penghijauan kota, tanam pohon bersama di taman kota dan median jalan."
+    }
   ];
 
   const modal = document.getElementById('event-modal');
