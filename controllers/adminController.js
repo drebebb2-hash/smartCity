@@ -1,5 +1,4 @@
 const ExcelJS = require('exceljs');
-const PDFDocument = require('pdfkit');
 const { createRequestClient } = require('../config/supabaseClient');
 const { createNotification } = require('../config/notificationHelper');
 
@@ -162,63 +161,6 @@ const exportColumns = [
   { header: 'Status', key: 'status', width: 16 },
   { header: 'Tanggal', key: 'createdAt', width: 24 }
 ];
-
-const writeReportsPdf = (res, rows) => {
-  const doc = new PDFDocument({ margin: 36, size: 'A4', layout: 'landscape' });
-  const columnWidths = [38, 210, 120, 130, 85, 130];
-  const rowHeight = 22;
-
-  doc.pipe(res);
-  doc.fontSize(18).font('Helvetica-Bold').text('Laporan Smart City Report', { align: 'center' });
-  doc.moveDown(0.4);
-  doc.fontSize(10).font('Helvetica').text(`Tanggal export: ${formatDate(new Date())}`, { align: 'left' });
-  doc.moveDown();
-
-  const drawHeader = () => {
-    const startX = doc.x;
-    let x = startX;
-
-    doc.font('Helvetica-Bold').fontSize(9);
-    exportColumns.forEach((column, index) => {
-      doc.text(column.header, x, doc.y, { width: columnWidths[index] });
-      x += columnWidths[index];
-    });
-    doc.moveDown(0.8);
-    doc.moveTo(startX, doc.y).lineTo(startX + columnWidths.reduce((sum, width) => sum + width, 0), doc.y).stroke();
-    doc.moveDown(0.4);
-  };
-
-  drawHeader();
-  doc.font('Helvetica').fontSize(8);
-
-  if (!rows.length) {
-    doc.text('Tidak ada data laporan untuk filter yang dipilih.');
-  }
-
-  rows.forEach((row) => {
-    if (doc.y + rowHeight > doc.page.height - doc.page.margins.bottom) {
-      doc.addPage();
-      drawHeader();
-      doc.font('Helvetica').fontSize(8);
-    }
-
-    const startY = doc.y;
-    let x = doc.x;
-
-    exportColumns.forEach((column, index) => {
-      doc.text(String(row[column.key] || '-'), x, startY, {
-        width: columnWidths[index],
-        height: rowHeight,
-        ellipsis: true
-      });
-      x += columnWidths[index];
-    });
-
-    doc.y = startY + rowHeight;
-  });
-
-  doc.end();
-};
 
 const writeReportsExcel = async (res, rows) => {
   const workbook = new ExcelJS.Workbook();
@@ -385,23 +327,6 @@ exports.getStatisticsPage = (req, res) => {
   res.render('admin/statistics', {
     title: 'Statistik Laporan'
   });
-};
-
-exports.exportReportsPDF = async (req, res) => {
-  try {
-    const filters = getReportFilters(req.query);
-    const userSupabase = getUserSupabase(req);
-    const reports = await loadAdminReports(userSupabase, filters);
-    const rows = getReportExportRows(reports);
-    const dateStamp = getExportDateStamp();
-    const filename = `laporan-smart-city-${dateStamp}.pdf`;
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    return writeReportsPdf(res, rows);
-  } catch (error) {
-    req.flash('error', `Gagal export PDF: ${error.message}`);
-    return res.redirect(`/admin/reports?${buildReportExportQueryString(getReportFilters(req.query))}`);
-  }
 };
 
 exports.exportReportsExcel = async (req, res) => {
