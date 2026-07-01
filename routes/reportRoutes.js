@@ -18,6 +18,7 @@ router.get('/reports/map', requireAuth, reportController.getMapPage);
 router.get('/api/reports/map-data', requireAuth, reportController.getMapData);
 router.post('/reports/:id/comments', requireAuth, reportController.addComment);
 router.post('/reports/:id/upvote', requireAuth, reportController.toggleUpvote);
+router.post('/reports/:id/rating', requireAuth, reportController.submitRating);
 router.get('/reports/:id', requireAuth, reportController.getReportDetail);
  
 module.exports = router;
