@@ -15,7 +15,7 @@
           <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">Export / Simpan Data</p>
           <div class="flex flex-wrap gap-2">
             <a href="/admin/reports/export/excel<%= exportQuery ? `?${exportQuery}` : '' %>" class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
-              💾 Save ke Excel
+              <svg class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 4v6h8V4M8 16h8" stroke-linecap="round"/></svg> Save ke Excel
             </a>
           </div>
           <p class="mt-2 text-xs text-emerald-700">File yang disimpan mengikuti filter aktif di bawah.</p>
@@ -132,7 +132,7 @@
         <% if (!reports.length) { %>
           <% const hasActiveFilter = filters.status || filters.category || filters.search; %>
           <div class="px-6 py-14 text-center">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-3xl"><%= hasActiveFilter ? '🔎' : '📋' %></div>
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-700"><% if (hasActiveFilter) { %><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg><% } else { %><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7V3Z"/><path d="M14 3v5h5M9 13h6M9 17h4" stroke-linecap="round"/></svg><% } %></div>
             <h2 class="text-lg font-semibold text-slate-950"><%= hasActiveFilter ? 'Hasil filter kosong' : 'Belum ada laporan masuk' %></h2>
             <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
               <%= hasActiveFilter ? 'Tidak ada laporan yang cocok dengan filter saat ini. Coba reset filter atau gunakan kata kunci lain.' : 'Saat warga mulai mengirim laporan, daftar laporan akan tampil di sini untuk ditinjau admin atau petugas.' %>

@@ -28,7 +28,7 @@
       </a>
 
       <button id="mobileMenuButton" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-100 lg:hidden" aria-controls="siteNavMenu" aria-expanded="false" aria-label="Buka menu navigasi">
-        <span class="text-xl" aria-hidden="true">☰</span>
+        <svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
       </button>
 
       <div id="siteNavMenu" class="hidden items-center gap-2 lg:flex">
@@ -42,7 +42,7 @@
           <a href="/reports/map" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-emerald-700">Peta Laporan</a>
           <a href="/reports/my" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-emerald-700">Laporan Saya</a>
           <a href="/notifications" class="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-100" aria-label="Notifikasi">
-            <span aria-hidden="true">🔔</span>
+            <svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 21h4" stroke-linecap="round"/></svg>
             <span id="notificationBadge" data-count="<%= unreadNotificationCount || 0 %>" class="<%= unreadNotificationCount > 0 ? '' : 'hidden' %> absolute -right-1 -top-1 min-w-5 rounded-full bg-red-600 px-1.5 py-0.5 text-center text-[11px] font-bold leading-none text-white transition-transform">
               <%= unreadNotificationCount > 99 ? '99+' : unreadNotificationCount %>
             </span>
@@ -68,7 +68,7 @@
           <% if (currentUser.role === 'admin' || currentUser.role === 'petugas') { %><a href="/admin/reports" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Semua Laporan</a><% } %>
           <a href="/reports/map" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Peta Laporan</a>
           <a href="/reports/my" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Laporan Saya</a>
-          <a href="/notifications" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">🔔 Notifikasi <%= unreadNotificationCount > 0 ? `(${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount})` : '' %></a>
+          <a href="/notifications" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"><span class="inline-flex items-center gap-2"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 21h4" stroke-linecap="round"/></svg>Notifikasi <%= unreadNotificationCount > 0 ? `(${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount})` : '' %></span></a>
           <% if (currentUser.role === 'warga') { %><a href="/reports/new" class="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">Buat Laporan</a><% } %>
           <form action="/logout" method="POST"><button type="submit" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-red-50 hover:text-red-700">Logout</button></form>
         <% } else { %>
@@ -102,7 +102,9 @@
       const isOpen = !panel.classList.contains('hidden');
       panel.classList.toggle('hidden', isOpen);
       button.setAttribute('aria-expanded', String(!isOpen));
-      button.querySelector('span').textContent = isOpen ? '☰' : '×';
+      button.innerHTML = isOpen
+        ? '<svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>'
+        : '<svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>';
     });
   })();
 </script>

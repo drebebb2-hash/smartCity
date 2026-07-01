@@ -1,33 +1,82 @@
 <%- include('partials/header', { title }) %>
 
 <main class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-  <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
-    <div class="grid gap-8 p-8 sm:p-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-      <div class="space-y-5">
-        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Sistem Pelaporan Masalah Kota</p>
-        <h1 class="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">Smart City Report</h1>
-        <p class="max-w-2xl text-lg leading-8 text-slate-600">Laporkan masalah kota, pantau status tindak lanjut, dan bantu petugas memperbaiki lingkungan sekitar dengan proses yang transparan.</p>
+  <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft">
+    <div class="grid gap-10 p-8 sm:p-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+      <div class="space-y-7">
+        <div class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+          Platform pelaporan warga
+        </div>
+        <div class="space-y-4">
+          <h1 class="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">Bikin laporan kota lebih cepat ditindaklanjuti.</h1>
+          <p class="max-w-2xl text-lg leading-8 text-slate-600">Smart City Report membantu warga mengirim laporan lengkap dengan foto dan lokasi, sementara admin dan petugas bisa memantau prioritas, status, serta progres tindak lanjut dalam satu alur kerja.</p>
+        </div>
         <div class="flex flex-col gap-3 sm:flex-row">
           <% if (currentUser && currentUser.role === 'warga') { %>
-            <a href="/reports/new" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Buat Laporan</a>
-            <a href="/reports/map" class="inline-flex items-center justify-center rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Lihat Peta</a>
+            <a href="/reports/new" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Buat Laporan</a>
+            <a href="/reports/map" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Lihat Peta Laporan</a>
           <% } else if (currentUser) { %>
-            <a href="/reports/map" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Lihat Peta</a>
-            <a href="/reports/my" class="inline-flex items-center justify-center rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Laporan Saya</a>
+            <a href="/reports/map" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Lihat Peta Laporan</a>
+            <a href="/reports/my" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Laporan Saya</a>
           <% } else { %>
-            <a href="/register" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Mulai Sekarang</a>
-            <a href="/login" class="inline-flex items-center justify-center rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Login</a>
+            <a href="/register" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Mulai Melapor</a>
+            <a href="/login" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Login</a>
           <% } %>
         </div>
+        <div class="grid gap-3 pt-2 sm:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-2xl font-bold text-slate-950">Realtime</p>
+            <p class="mt-1 text-sm text-slate-500">Notifikasi progres untuk pelapor.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-2xl font-bold text-slate-950">Terukur</p>
+            <p class="mt-1 text-sm text-slate-500">Statistik status dan kategori.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-2xl font-bold text-slate-950">Transparan</p>
+            <p class="mt-1 text-sm text-slate-500">Riwayat tindak lanjut tersimpan.</p>
+          </div>
+        </div>
       </div>
-      <div class="rounded-3xl bg-gradient-to-br from-emerald-50 to-sky-50 p-6">
-        <div class="grid gap-4">
-          <% [['📍','Laporkan lokasi masalah'], ['🔔','Terima notifikasi status'], ['📊','Pantau statistik kota']].forEach((item) => { %>
-            <div class="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-xl text-white"><%= item[0] %></div>
-              <p class="font-semibold text-slate-900"><%= item[1] %></p>
+
+      <div class="relative">
+        <div class="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-emerald-200/50 blur-3xl"></div>
+        <div class="absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-sky-200/60 blur-3xl"></div>
+        <div class="relative rounded-[1.75rem] border border-slate-200 bg-slate-950 p-4 shadow-2xl">
+          <div class="rounded-[1.25rem] bg-white p-5">
+            <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Laporan prioritas</p>
+                <h2 class="mt-1 font-bold text-slate-950">Jalan rusak dekat sekolah</h2>
+              </div>
+              <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Diproses</span>
             </div>
-          <% }) %>
+            <div class="space-y-4">
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <div class="mb-3 flex items-center gap-3">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-4.6 7-11a7 7 0 1 0-14 0c0 6.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                  </span>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">Lokasi terverifikasi</p>
+                    <p class="text-xs text-slate-500">Koordinat tampil di peta sebaran.</p>
+                  </div>
+                </div>
+                <div class="h-24 rounded-xl bg-gradient-to-br from-emerald-100 via-slate-100 to-sky-100"></div>
+              </div>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div class="rounded-2xl border border-slate-200 p-4">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Upvote warga</p>
+                  <p class="mt-2 text-2xl font-bold text-slate-950">24</p>
+                </div>
+                <div class="rounded-2xl border border-slate-200 p-4">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Target respon</p>
+                  <p class="mt-2 text-2xl font-bold text-slate-950">1 hari</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
