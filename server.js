@@ -70,6 +70,12 @@ app.use('/', dashboardRoutes);
 app.use('/', reportRoutes);
 app.use('/', notificationRoutes);
 
+app.use((req, res) => {
+  res.status(404).render('errors/404', {
+    title: '404 Not Found - Smart City Report'
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Smart City Report berjalan di http://localhost:${PORT}`);
 });

@@ -1,19 +1,28 @@
 <%- include('../partials/header', { title }) %>
 
-<main class="mx-auto max-w-6xl px-4 py-10">
-  <div class="grid gap-6 lg:grid-cols-[240px_1fr]">
+<main class="animate-fadeIn bg-gray-50 px-4 py-10 dark:bg-gray-900 sm:px-6 lg:px-8"><div class="mx-auto max-w-7xl">
+  <div class="grid gap-6 lg:grid-cols-[280px_1fr]">
     <%- include('partials/nav', { activeMenu: 'statistics' }) %>
 
     <section>
       <div class="mb-8">
-        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Analitik Laporan</p>
+        <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Analitik Laporan</p>
         <h1 class="mt-2 text-3xl font-bold text-slate-950">Statistik</h1>
         <p class="mt-2 text-slate-600">Visualisasi kategori, status, tren laporan, dan kepuasan warga.</p>
       </div>
 
-      <div id="statsError" class="mb-6 hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"></div>
+      <div id="statsError" class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm"></div>
 
-      <div class="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div id="statsLoading" class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <% for (let i = 0; i < 4; i += 1) { %>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="h-4 w-28 animate-pulse rounded bg-slate-200"></div>
+            <div class="mt-4 h-9 w-20 animate-pulse rounded bg-slate-200"></div>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
         <p class="text-sm font-medium text-slate-500">Rata-rata Rating Kepuasan</p>
         <div class="mt-2 flex items-end gap-2">
           <p id="averageRating" class="text-4xl font-bold text-slate-950">-</p>
@@ -22,33 +31,42 @@
       </div>
 
       <div class="grid gap-6 xl:grid-cols-2">
-        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
           <div class="mb-4">
             <h2 class="font-semibold text-slate-950">Laporan per Kategori</h2>
             <p class="mt-1 text-sm text-slate-500">Jumlah laporan berdasarkan kategori masalah.</p>
           </div>
-          <div class="h-80">
+          <div class="relative h-80">
             <canvas id="categoryChart"></canvas>
+            <div id="categoryEmpty" class="hidden absolute inset-0 flex items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-center">
+              <p class="px-4 text-sm text-slate-500">Belum ada data kategori untuk divisualisasikan.</p>
+            </div>
           </div>
         </article>
 
-        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
           <div class="mb-4">
             <h2 class="font-semibold text-slate-950">Distribusi Status</h2>
             <p class="mt-1 text-sm text-slate-500">Proporsi laporan berdasarkan status terkini.</p>
           </div>
-          <div class="h-80">
+          <div class="relative h-80">
             <canvas id="statusChart"></canvas>
+            <div id="statusEmpty" class="hidden absolute inset-0 flex items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-center">
+              <p class="px-4 text-sm text-slate-500">Belum ada distribusi status yang bisa ditampilkan.</p>
+            </div>
           </div>
         </article>
 
-        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md xl:col-span-2">
           <div class="mb-4">
             <h2 class="font-semibold text-slate-950">Tren 8 Minggu Terakhir</h2>
             <p class="mt-1 text-sm text-slate-500">Jumlah laporan baru per minggu.</p>
           </div>
-          <div class="h-80">
+          <div class="relative h-80">
             <canvas id="weeklyChart"></canvas>
+            <div id="weeklyEmpty" class="hidden absolute inset-0 flex items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-center">
+              <p class="px-4 text-sm text-slate-500">Belum ada tren mingguan yang tersedia.</p>
+            </div>
           </div>
         </article>
       </div>
@@ -85,6 +103,17 @@
     const errorBox = document.getElementById('statsError');
     errorBox.textContent = message;
     errorBox.classList.remove('hidden');
+  }
+
+  function setLoading(isLoading) {
+    document.getElementById('statsLoading').classList.toggle('hidden', !isLoading);
+  }
+
+  function toggleChartEmpty(id, canvasId, items) {
+    const hasData = Array.isArray(items) && items.some((item) => Number(item.count) > 0);
+    document.getElementById(id).classList.toggle('hidden', hasData);
+    document.getElementById(canvasId).classList.toggle('hidden', !hasData);
+    return hasData;
   }
 
   function createCategoryChart(items) {
@@ -188,14 +217,21 @@
       const data = await response.json();
       document.getElementById('averageRating').textContent = data.averageRating ?? '0';
 
-      createCategoryChart(data.reportsByCategory || []);
-      createStatusChart(data.reportsByStatus || []);
-      createWeeklyChart(data.reportsByWeek || []);
+      const categories = data.reportsByCategory || [];
+      const statuses = data.reportsByStatus || [];
+      const weeks = data.reportsByWeek || [];
+
+      if (toggleChartEmpty('categoryEmpty', 'categoryChart', categories)) createCategoryChart(categories);
+      if (toggleChartEmpty('statusEmpty', 'statusChart', statuses)) createStatusChart(statuses);
+      if (toggleChartEmpty('weeklyEmpty', 'weeklyChart', weeks)) createWeeklyChart(weeks);
     } catch (error) {
       showError(error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
+  setLoading(true);
   loadStats();
 </script>
 
