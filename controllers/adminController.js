@@ -1,3 +1,5 @@
+const PDFDocument = require('pdfkit');
+const ExcelJS = require('exceljs');
 const { createRequestClient } = require('../config/supabaseClient');
 const { createNotification } = require('../config/notificationHelper');
 
