@@ -4,6 +4,17 @@
 
 <main class="relative h-[calc(100vh-73px)] w-full">
   <div id="reportsMap" class="h-full w-full"></div>
+  <div id="mapLoading" class="absolute inset-0 z-[900] flex items-center justify-center bg-slate-900/10 backdrop-blur-[1px]">
+    <div class="rounded-2xl border border-slate-200 bg-white/95 px-5 py-4 text-center shadow-soft">
+      <div class="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-emerald-100 border-t-emerald-600"></div>
+      <p class="mt-3 text-sm font-semibold text-slate-700">Memuat peta laporan...</p>
+    </div>
+  </div>
+  <div id="mapEmptyState" class="pointer-events-none absolute inset-x-4 bottom-6 z-[1000] hidden rounded-2xl border border-dashed border-slate-300 bg-white/95 p-5 text-center shadow-soft backdrop-blur sm:left-1/2 sm:max-w-md sm:-translate-x-1/2">
+    <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-2xl">🗺️</div>
+    <h2 class="text-sm font-semibold text-slate-950">Belum ada titik laporan</h2>
+    <p id="mapEmptyText" class="mt-1 text-xs leading-5 text-slate-500">Data laporan akan muncul di peta setelah tersedia.</p>
+  </div>
 
   <section class="absolute left-4 top-4 z-[1000] w-[calc(100%-2rem)] max-w-xl rounded-lg border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur">
     <div class="mb-3 flex items-center justify-between gap-3">
@@ -43,6 +54,9 @@
   const categoryFilter = document.getElementById('categoryFilter');
   const statusFilter = document.getElementById('statusFilter');
   const reportCount = document.getElementById('reportCount');
+  const mapLoading = document.getElementById('mapLoading');
+  const mapEmptyState = document.getElementById('mapEmptyState');
+  const mapEmptyText = document.getElementById('mapEmptyText');
   const reports = [];
   const markers = [];
 
@@ -143,6 +157,10 @@
     });
 
     reportCount.textContent = `${visibleCount} laporan`;
+    mapEmptyState.classList.toggle('hidden', visibleCount > 0);
+    mapEmptyText.textContent = markers.length
+      ? 'Tidak ada laporan yang sesuai dengan filter saat ini. Coba ubah kategori atau status.'
+      : 'Belum ada laporan dengan koordinat yang bisa ditampilkan di peta.';
   }
 
   async function loadReports() {
@@ -175,7 +193,11 @@
       }
     } catch (error) {
       reportCount.textContent = 'Gagal memuat';
+      mapEmptyState.classList.remove('hidden');
+      mapEmptyText.textContent = error.message || 'Terjadi kendala saat memuat data peta.';
       console.error(error);
+    } finally {
+      mapLoading.classList.add('hidden');
     }
   }
 

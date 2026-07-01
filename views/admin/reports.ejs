@@ -17,9 +17,6 @@
             <a href="/admin/reports/export/excel<%= exportQuery ? `?${exportQuery}` : '' %>" class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
               💾 Save ke Excel
             </a>
-            <a href="/admin/reports/export/pdf<%= exportQuery ? `?${exportQuery}` : '' %>" class="inline-flex items-center rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50">
-              📄 Save ke PDF
-            </a>
           </div>
           <p class="mt-2 text-xs text-emerald-700">File yang disimpan mengikuti filter aktif di bawah.</p>
         </div>
@@ -31,7 +28,7 @@
         </div>
       <% } %>
 
-      <form action="/admin/reports" method="GET" class="mb-6 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <form action="/admin/reports" method="GET" class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div class="grid gap-4 md:grid-cols-[1fr_1fr_1.4fr_auto] md:items-end">
           <div>
             <label for="status" class="mb-2 block text-sm font-medium text-slate-700">Status</label>
@@ -83,7 +80,7 @@
             <tbody class="divide-y divide-slate-200">
               <% reports.forEach((report) => { %>
                 <% const meta = getStatusMeta(report.status); %>
-                <tr>
+                <tr class="transition hover:bg-emerald-50/40">
                   <td class="px-4 py-4">
                     <div class="flex items-center gap-3">
                       <div class="h-14 w-20 overflow-hidden rounded-lg bg-slate-100">
@@ -109,7 +106,7 @@
         <div class="grid gap-4 p-4 lg:hidden">
           <% reports.forEach((report) => { %>
             <% const meta = getStatusMeta(report.status); %>
-            <article class="rounded-lg border border-slate-200 p-4">
+            <article class="rounded-xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
               <div class="mb-3 flex gap-3">
                 <div class="h-20 w-24 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                   <% if (report.photo_url) { %>
@@ -133,9 +130,16 @@
         </div>
 
         <% if (!reports.length) { %>
-          <div class="px-6 py-12 text-center">
-            <h2 class="text-lg font-semibold text-slate-950">Tidak ada laporan</h2>
-            <p class="mt-2 text-sm text-slate-500">Coba ubah filter atau kata kunci pencarian.</p>
+          <% const hasActiveFilter = filters.status || filters.category || filters.search; %>
+          <div class="px-6 py-14 text-center">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-3xl"><%= hasActiveFilter ? '🔎' : '📋' %></div>
+            <h2 class="text-lg font-semibold text-slate-950"><%= hasActiveFilter ? 'Hasil filter kosong' : 'Belum ada laporan masuk' %></h2>
+            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+              <%= hasActiveFilter ? 'Tidak ada laporan yang cocok dengan filter saat ini. Coba reset filter atau gunakan kata kunci lain.' : 'Saat warga mulai mengirim laporan, daftar laporan akan tampil di sini untuk ditinjau admin atau petugas.' %>
+            </p>
+            <% if (hasActiveFilter) { %>
+              <a href="/admin/reports" class="mt-5 inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Reset Filter</a>
+            <% } %>
           </div>
         <% } %>
       </section>
