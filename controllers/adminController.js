@@ -595,10 +595,8 @@ exports.assignReport = async (req, res) => {
 
       req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'} dan notifikasi dikirim.`);
     } catch (notificationError) {
-      req.flash(
-        'success',
-        `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}, tetapi notifikasi belum terkirim: ${notificationError.message}`
-      );
+      console.warn(`Notifikasi assignment gagal dikirim untuk laporan ${reportId}: ${notificationError.message}`);
+      req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}.`);
     }
 
     return res.redirect(`/reports/${reportId}`);
