@@ -585,14 +585,20 @@ exports.assignReport = async (req, res) => {
       throw new Error(updateError.message);
     }
 
-    await createNotification(
-      petugasId,
-      reportId,
-      `Anda ditugaskan menangani laporan: ${report.title}`,
-      userSupabase
-    );
+    try {
+      await createNotification(
+        petugasId,
+        reportId,
+        `Anda ditugaskan menangani laporan: ${report.title}`,
+        userSupabase
+      );
 
-    req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}.`);
+      req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'} dan notifikasi dikirim.`);
+    } catch (notificationError) {
+      console.warn(`Notifikasi assignment gagal dikirim untuk laporan ${reportId}: ${notificationError.message}`);
+      req.flash('success', `Laporan berhasil ditugaskan ke ${petugas.full_name || 'petugas'}.`);
+    }
+
     return res.redirect(`/reports/${reportId}`);
   } catch (error) {
     req.flash('error', `Gagal assign petugas: ${error.message}`);
@@ -612,6 +618,22 @@ exports.updateReportStatus = async (req, res) => {
   try {
     const userSupabase = getUserSupabase(req);
     const notificationMessage = getStatusNotificationMessage(status);
+    const { data: report, error: reportError } = await userSupabase
+      .from('reports')
+      .select('id, assigned_to')
+      .eq('id', reportId)
+      .single();
+
+    if (reportError || !report) {
+      req.flash('error', 'Laporan tidak ditemukan.');
+      return res.redirect('/admin/reports');
+    }
+
+    if (req.session.user.role === 'petugas' && report.assigned_to !== req.session.user.id) {
+      req.flash('error', 'Anda hanya bisa memperbarui status laporan yang ditugaskan kepada Anda.');
+      return res.redirect('/petugas/dashboard');
+    }
+
     const { error: updateError } = await userSupabase
       .rpc('update_report_status_with_history', {
         p_report_id: reportId,
