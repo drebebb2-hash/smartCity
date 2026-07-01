@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { createRequestClient } = require('../config/supabaseClient');
+const { getPetugasList } = require('./adminController');
 
 const renderNewReportForm = (res, data = {}) => {
   res.render('reports/new', {
@@ -363,17 +364,7 @@ exports.getReportDetail = async (req, res) => {
     let assignedPetugas = null;
 
     if (req.session.user.role === 'admin') {
-      const { data: petugas, error: petugasError } = await userSupabase
-        .from('profiles')
-        .select('id, full_name, phone, avatar_url')
-        .eq('role', 'petugas')
-        .order('full_name', { ascending: true });
-
-      if (petugasError) {
-        throw new Error(petugasError.message);
-      }
-
-      petugasList = petugas || [];
+      petugasList = await getPetugasList(userSupabase);
       assignedPetugas = petugasList.find((profile) => profile.id === report.assigned_to) || null;
 
       if (report.assigned_to && !assignedPetugas) {
