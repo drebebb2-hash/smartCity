@@ -1,10 +1,39 @@
-  <footer class="border-t border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-slate-500 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-      <p>&copy; <%= new Date().getFullYear() %> Smart City Report. Dibangun untuk partisipasi warga.</p>
-      <div class="flex gap-4 font-semibold">
-        <a href="/" class="hover:text-indigo-600">Home</a>
-        <a href="/reports/map" class="hover:text-indigo-600">Peta</a>
-        <a href="/#nomor-darurat" class="hover:text-indigo-600">Nomor Darurat</a>
+  <footer class="mt-auto border-t border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="grid gap-10 md:grid-cols-3">
+        <div>
+          <a href="/" class="flex items-center gap-3">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-sm shadow-indigo-500/30">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V9l5-4 5 4v12"/><path d="M14 21V5h6v16M8 13h2M8 17h2M17 9h1M17 13h1M17 17h1" stroke-linecap="round"/></svg>
+            </span>
+            <span class="text-lg tracking-tight"><span class="font-extrabold text-indigo-600">Smart City</span> <span class="font-medium text-slate-600 dark:text-slate-300">Report</span></span>
+          </a>
+          <p class="mt-4 max-w-sm text-sm leading-7 text-slate-500 dark:text-slate-400">Platform partisipasi warga untuk melaporkan masalah kota, memantau tindak lanjut, dan mengakses informasi publik secara transparan.</p>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-extrabold uppercase tracking-wide text-slate-950 dark:text-white">Navigasi</h2>
+          <nav class="mt-4 grid gap-3 text-sm font-semibold text-slate-500 dark:text-slate-400">
+            <a href="/" class="transition-colors hover:text-indigo-600 dark:hover:text-indigo-300">Home</a>
+            <a href="/reports/new" class="transition-colors hover:text-indigo-600 dark:hover:text-indigo-300">Buat Laporan</a>
+            <a href="/reports/map" class="transition-colors hover:text-indigo-600 dark:hover:text-indigo-300">Peta Laporan</a>
+            <a href="/info/events" class="transition-colors hover:text-indigo-600 dark:hover:text-indigo-300">Kalender Event</a>
+          </nav>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-extrabold uppercase tracking-wide text-slate-950 dark:text-white">Layanan Publik</h2>
+          <div class="mt-4 grid gap-3 text-sm text-slate-500 dark:text-slate-400">
+            <a href="/info/emergency" class="font-semibold text-rose-600 transition-colors hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300">Nomor Darurat Kota</a>
+            <p>Call center utama: <a href="tel:112" class="font-bold text-slate-700 hover:text-indigo-600 dark:text-slate-200 dark:hover:text-indigo-300">112</a></p>
+            <p>Email dukungan: <a href="mailto:help@smartcity.local" class="font-semibold text-slate-700 hover:text-indigo-600 dark:text-slate-200 dark:hover:text-indigo-300">help@smartcity.local</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-sm text-slate-500 dark:border-gray-800 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+        <p>&copy; <%= new Date().getFullYear() %> Smart City Report. Semua hak dilindungi.</p>
+        <p>Dibangun untuk partisipasi warga dan kota yang responsif.</p>
       </div>
     </div>
   </footer>
