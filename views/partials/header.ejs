@@ -4,93 +4,149 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof title !== 'undefined' && title.includes('Smart City Report') ? title : `${typeof title !== 'undefined' ? title : 'Beranda'} - Smart City Report` %></title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23059669'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='white'%3ESC%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Cpath d='M14 48V24l10-6 10 6v24H14Zm24 0V16h12v32H38Z' fill='white'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
-          boxShadow: {
-            soft: '0 18px 45px rgba(15, 23, 42, 0.08)'
-          }
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          boxShadow: { soft: '0 18px 45px rgba(15, 23, 42, 0.10)' }
         }
       }
     };
   </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn .4s ease-out; }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+    .toast-in { animation: toastIn .28s ease-out; }
+  </style>
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) document.documentElement.classList.add('dark');
+    })();
+  </script>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
-<nav class="sticky top-0 z-[1100] border-b border-slate-200 bg-white/95 backdrop-blur">
-  <div class="mx-auto max-w-6xl px-4 py-3">
-    <div class="flex items-center justify-between gap-3">
-      <a href="/" class="group flex min-w-0 items-center gap-2 text-lg font-semibold text-slate-950 transition hover:text-emerald-700">
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white shadow-sm transition group-hover:scale-105 group-hover:bg-emerald-700">SC</span>
-        <span class="truncate">Smart City Report</span>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-gray-900 dark:text-slate-100">
+<nav class="sticky top-0 z-[1200] border-b border-slate-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between gap-4">
+      <a href="/" class="flex shrink-0 items-center gap-3">
+        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-sm shadow-indigo-500/30">
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V9l5-4 5 4v12"/><path d="M14 21V5h6v16M8 13h2M8 17h2M17 9h1M17 13h1M17 17h1" stroke-linecap="round"/></svg>
+        </span>
+        <span class="text-lg tracking-tight"><span class="font-extrabold text-indigo-600">Smart City</span> <span class="font-medium text-slate-600 dark:text-slate-300">Report</span></span>
       </a>
 
-      <button id="mobileMenuButton" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-100 lg:hidden" aria-controls="siteNavMenu" aria-expanded="false" aria-label="Buka menu navigasi">
-        <svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
-      </button>
-
-      <div id="siteNavMenu" class="hidden items-center gap-2 lg:flex">
-        <% if (currentUser) { %>
-          <% if (currentUser.role === 'admin') { %>
-            <a href="/admin/dashboard" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-emerald-700">Admin</a>
-          <% } %>
-          <% if (currentUser.role === 'admin' || currentUser.role === 'petugas') { %>
-            <a href="/admin/reports" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-emerald-700">Semua Laporan</a>
-          <% } %>
-          <a href="/reports/map" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-emerald-700">Peta Laporan</a>
-          <a href="/reports/my" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-emerald-700">Laporan Saya</a>
-          <a href="/notifications" class="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-100" aria-label="Notifikasi">
-            <svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 21h4" stroke-linecap="round"/></svg>
-            <span id="notificationBadge" data-count="<%= unreadNotificationCount || 0 %>" class="<%= unreadNotificationCount > 0 ? '' : 'hidden' %> absolute -right-1 -top-1 min-w-5 rounded-full bg-red-600 px-1.5 py-0.5 text-center text-[11px] font-bold leading-none text-white transition-transform">
-              <%= unreadNotificationCount > 99 ? '99+' : unreadNotificationCount %>
-            </span>
-          </a>
-          <% if (currentUser.role === 'warga') { %>
-            <a href="/reports/new" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Buat Laporan</a>
-          <% } %>
-          <span class="hidden max-w-[180px] truncate text-sm text-slate-600 xl:inline">Halo, <span class="font-medium text-slate-900"><%= currentUser.full_name || currentUser.email %></span></span>
-          <form action="/logout" method="POST">
-            <button type="submit" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700">Logout</button>
-          </form>
-        <% } else { %>
-          <a href="/login" class="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-emerald-700">Login</a>
-          <a href="/register" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Register</a>
-        <% } %>
+      <div class="hidden items-center gap-1 lg:flex">
+        <a href="/" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 dark:text-slate-300 dark:hover:bg-gray-800">Home</a>
+        <a href="/reports/new" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 dark:text-slate-300 dark:hover:bg-gray-800">Buat Laporan</a>
+        <a href="/reports/map" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 dark:text-slate-300 dark:hover:bg-gray-800">Peta</a>
+        <a href="/#kalender" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 dark:text-slate-300 dark:hover:bg-gray-800">Kalender</a>
+        <a href="/#nomor-darurat" class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 dark:text-slate-300 dark:hover:bg-gray-800">Nomor Darurat</a>
+        <% if (currentUser && currentUser.role === 'admin') { %><a href="/admin/dashboard" class="rounded-xl px-3 py-2 text-sm font-semibold text-indigo-700 transition-all duration-200 hover:bg-indigo-50 active:scale-95 dark:text-indigo-300 dark:hover:bg-gray-800">Admin</a><% } %>
       </div>
-    </div>
 
-    <div id="mobileNavPanel" class="hidden border-t border-slate-100 pt-3 lg:hidden">
-      <div class="grid gap-2">
+      <div class="flex items-center gap-2">
+        <button type="button" data-theme-toggle class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-all duration-200 hover:bg-slate-100 active:scale-95 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800" aria-label="Toggle dark mode">
+          <svg class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke-linecap="round"/></svg>
+          <svg class="hidden h-5 w-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+
         <% if (currentUser) { %>
-          <% if (currentUser.role === 'admin') { %><a href="/admin/dashboard" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Admin</a><% } %>
-          <% if (currentUser.role === 'admin' || currentUser.role === 'petugas') { %><a href="/admin/reports" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Semua Laporan</a><% } %>
-          <a href="/reports/map" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Peta Laporan</a>
-          <a href="/reports/my" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Laporan Saya</a>
-          <a href="/notifications" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"><span class="inline-flex items-center gap-2"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 21h4" stroke-linecap="round"/></svg>Notifikasi <%= unreadNotificationCount > 0 ? `(${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount})` : '' %></span></a>
-          <% if (currentUser.role === 'warga') { %><a href="/reports/new" class="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">Buat Laporan</a><% } %>
-          <form action="/logout" method="POST"><button type="submit" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-red-50 hover:text-red-700">Logout</button></form>
+          <a href="/notifications" class="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800" aria-label="Notifikasi">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 21h4" stroke-linecap="round"/></svg>
+            <span id="notificationBadge" data-count="<%= unreadNotificationCount || 0 %>" class="<%= unreadNotificationCount > 0 ? '' : 'hidden' %> absolute -right-1 -top-1 min-w-5 rounded-full bg-rose-500 px-1.5 py-0.5 text-center text-[11px] font-bold leading-none text-white"><%= unreadNotificationCount > 99 ? '99+' : unreadNotificationCount %></span>
+          </a>
+          <div class="relative hidden sm:block" data-profile-menu>
+            <button type="button" data-profile-toggle class="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 transition-all duration-200 hover:bg-slate-50 active:scale-95 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-xs font-bold text-white"><%= (currentUser.full_name || currentUser.email || 'U').slice(0, 1).toUpperCase() %></span>
+              <span class="max-w-[120px] truncate text-sm font-semibold text-slate-700 dark:text-slate-200"><%= currentUser.full_name || currentUser.email %></span>
+            </button>
+            <div data-profile-dropdown class="absolute right-0 mt-3 hidden w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-900">
+              <a href="/dashboard" class="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Profil</a>
+              <a href="/reports/my" class="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Laporan Saya</a>
+              <form action="/logout" method="POST"><button type="submit" class="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-gray-800">Logout</button></form>
+            </div>
+          </div>
         <% } else { %>
-          <a href="/login" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">Login</a>
-          <a href="/register" class="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">Register</a>
+          <a href="/login" class="hidden rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-slate-100 active:scale-95 dark:text-slate-300 dark:hover:bg-gray-800 sm:inline-flex">Login</a>
+          <a href="/register" class="hidden rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-indigo-700 active:scale-95 sm:inline-flex">Register</a>
         <% } %>
+
+        <button id="mobileMenuButton" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-all duration-200 hover:bg-slate-100 active:scale-95 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800 lg:hidden" aria-label="Buka menu">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+        </button>
       </div>
     </div>
   </div>
 </nav>
 
-<% if (messages && messages.success && messages.success.length) { %>
-  <div class="mx-auto mt-4 max-w-6xl px-4">
-    <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm"><%= messages.success[0] %></div>
+<div id="mobileOverlay" class="fixed inset-0 z-[1300] hidden bg-slate-950/40 backdrop-blur-sm lg:hidden"></div>
+<aside id="mobileSidebar" class="fixed inset-y-0 left-0 z-[1400] w-80 -translate-x-full border-r border-slate-200 bg-white p-5 shadow-2xl transition-transform duration-300 dark:border-gray-800 dark:bg-gray-900 lg:hidden">
+  <div class="mb-8 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3"><span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V9l5-4 5 4v12"/><path d="M14 21V5h6v16"/></svg></span><span class="font-extrabold text-indigo-600">Smart City</span></a>
+    <button id="mobileCloseButton" class="rounded-xl p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-gray-800" type="button" aria-label="Tutup menu"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
   </div>
-<% } %>
+  <nav class="grid gap-2">
+    <a href="/" class="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Home</a>
+    <a href="/reports/new" class="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Buat Laporan</a>
+    <a href="/reports/map" class="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Peta</a>
+    <a href="/#kalender" class="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Kalender</a>
+    <a href="/#nomor-darurat" class="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Nomor Darurat</a>
+    <% if (currentUser) { %><a href="/reports/my" class="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-gray-800">Laporan Saya</a><% } %>
+  </nav>
+</aside>
 
-<% if (messages && messages.error && messages.error.length) { %>
-  <div class="mx-auto mt-4 max-w-6xl px-4">
-    <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm"><%= messages.error[0] %></div>
-  </div>
-<% } %>
+<div id="toastContainer" class="fixed bottom-5 right-5 z-[1500] space-y-3">
+  <% if (messages && messages.success && messages.success.length) { %><div class="toast-in rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 shadow-xl dark:border-emerald-900 dark:bg-gray-900 dark:text-emerald-300"><%= messages.success[0] %></div><% } %>
+  <% if (messages && messages.error && messages.error.length) { %><div class="toast-in rounded-2xl border border-rose-200 bg-white px-4 py-3 text-sm font-semibold text-rose-700 shadow-xl dark:border-rose-900 dark:bg-gray-900 dark:text-rose-300"><%= messages.error[0] %></div><% } %>
+</div>
+
+<script>
+  (() => {
+    document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    });
+
+    const overlay = document.getElementById('mobileOverlay');
+    const sidebar = document.getElementById('mobileSidebar');
+    const openButton = document.getElementById('mobileMenuButton');
+    const closeButton = document.getElementById('mobileCloseButton');
+    const openMenu = () => { overlay.classList.remove('hidden'); sidebar.classList.remove('-translate-x-full'); };
+    const closeMenu = () => { overlay.classList.add('hidden'); sidebar.classList.add('-translate-x-full'); };
+    openButton?.addEventListener('click', openMenu);
+    closeButton?.addEventListener('click', closeMenu);
+    overlay?.addEventListener('click', closeMenu);
+
+    document.querySelectorAll('[data-profile-toggle]').forEach((toggle) => {
+      toggle.addEventListener('click', () => toggle.closest('[data-profile-menu]').querySelector('[data-profile-dropdown]').classList.toggle('hidden'));
+    });
+
+    document.querySelectorAll('form').forEach((form) => {
+      form.addEventListener('submit', () => {
+        const button = form.querySelector('button[type="submit"]');
+        if (!button || button.dataset.noLoading === 'true') return;
+        button.disabled = true;
+        button.classList.add('opacity-80', 'cursor-wait');
+        button.insertAdjacentHTML('afterbegin', '<span class="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-2px]"></span>');
+      });
+    });
+
+    window.setTimeout(() => document.querySelectorAll('#toastContainer > div').forEach((toast) => toast.remove()), 3000);
+  })();
+</script>
 
 <script>
   (() => {
@@ -117,29 +173,12 @@
       const userId = '<%= currentUser.id %>';
       const supabaseUrl = '<%= supabasePublicConfig.url %>';
       const supabaseAnonKey = '<%= supabasePublicConfig.anonKey %>';
-
       if (!badge || !window.supabase || !userId || !supabaseUrl || !supabaseAnonKey) return;
-
       const client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-
-      function setBadgeCount(count) {
-        const safeCount = Math.max(0, Number(count) || 0);
-        badge.dataset.count = String(safeCount);
-        badge.textContent = safeCount > 99 ? '99+' : String(safeCount);
-        badge.classList.toggle('hidden', safeCount === 0);
-        badge.classList.add('scale-110');
-        window.setTimeout(() => badge.classList.remove('scale-110'), 180);
-      }
-
-      function incrementBadge() { setBadgeCount(Number(badge.dataset.count || 0) + 1); }
-      function decrementBadge() { setBadgeCount(Number(badge.dataset.count || 0) - 1); }
-
+      function setBadgeCount(count) { const safeCount = Math.max(0, Number(count) || 0); badge.dataset.count = String(safeCount); badge.textContent = safeCount > 99 ? '99+' : String(safeCount); badge.classList.toggle('hidden', safeCount === 0); }
       client.channel(`notifications:${userId}`)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, (payload) => { if (!payload.new.is_read) incrementBadge(); })
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, (payload) => {
-          if (!payload.old.is_read && payload.new.is_read) decrementBadge();
-          if (payload.old.is_read && !payload.new.is_read) incrementBadge();
-        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, (payload) => { if (!payload.new.is_read) setBadgeCount(Number(badge.dataset.count || 0) + 1); })
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, (payload) => { if (!payload.old.is_read && payload.new.is_read) setBadgeCount(Number(badge.dataset.count || 0) - 1); if (payload.old.is_read && !payload.new.is_read) setBadgeCount(Number(badge.dataset.count || 0) + 1); })
         .subscribe();
     })();
   </script>

@@ -1,86 +1,129 @@
 <%- include('partials/header', { title }) %>
 
-<main class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-  <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft">
-    <div class="grid gap-10 p-8 sm:p-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
-      <div class="space-y-7">
-        <div class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-          Platform pelaporan warga
-        </div>
-        <div class="space-y-4">
-          <h1 class="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">Bikin laporan kota lebih cepat ditindaklanjuti.</h1>
-          <p class="max-w-2xl text-lg leading-8 text-slate-600">Smart City Report membantu warga mengirim laporan lengkap dengan foto dan lokasi, sementara admin dan petugas bisa memantau prioritas, status, serta progres tindak lanjut dalam satu alur kerja.</p>
-        </div>
-        <div class="flex flex-col gap-3 sm:flex-row">
-          <% if (currentUser && currentUser.role === 'warga') { %>
-            <a href="/reports/new" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Buat Laporan</a>
-            <a href="/reports/map" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Lihat Peta Laporan</a>
-          <% } else if (currentUser) { %>
-            <a href="/reports/map" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Lihat Peta Laporan</a>
-            <a href="/reports/my" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Laporan Saya</a>
-          <% } else { %>
-            <a href="/register" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md">Mulai Melapor</a>
-            <a href="/login" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Login</a>
-          <% } %>
-        </div>
-        <div class="grid gap-3 pt-2 sm:grid-cols-3">
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-2xl font-bold text-slate-950">Realtime</p>
-            <p class="mt-1 text-sm text-slate-500">Notifikasi progres untuk pelapor.</p>
-          </div>
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-2xl font-bold text-slate-950">Terukur</p>
-            <p class="mt-1 text-sm text-slate-500">Statistik status dan kategori.</p>
-          </div>
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-2xl font-bold text-slate-950">Transparan</p>
-            <p class="mt-1 text-sm text-slate-500">Riwayat tindak lanjut tersimpan.</p>
-          </div>
-        </div>
+<main class="animate-fadeIn">
+  <section class="relative min-h-[60vh] overflow-hidden bg-gradient-to-br from-indigo-600 to-blue-500 text-white">
+    <div class="absolute inset-0 opacity-20" aria-hidden="true">
+      <div class="absolute left-10 top-10 h-48 w-48 rounded-full border border-white/40"></div>
+      <div class="absolute bottom-10 right-10 grid grid-cols-8 gap-3">
+        <% for (let i = 0; i < 48; i += 1) { %><span class="h-1.5 w-1.5 rounded-full bg-white"></span><% } %>
       </div>
-
-      <div class="relative">
-        <div class="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-emerald-200/50 blur-3xl"></div>
-        <div class="absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-sky-200/60 blur-3xl"></div>
-        <div class="relative rounded-[1.75rem] border border-slate-200 bg-slate-950 p-4 shadow-2xl">
-          <div class="rounded-[1.25rem] bg-white p-5">
-            <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Laporan prioritas</p>
-                <h2 class="mt-1 font-bold text-slate-950">Jalan rusak dekat sekolah</h2>
-              </div>
-              <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Diproses</span>
-            </div>
-            <div class="space-y-4">
-              <div class="rounded-2xl bg-slate-50 p-4">
-                <div class="mb-3 flex items-center gap-3">
-                  <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-4.6 7-11a7 7 0 1 0-14 0c0 6.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-                  </span>
-                  <div>
-                    <p class="text-sm font-semibold text-slate-900">Lokasi terverifikasi</p>
-                    <p class="text-xs text-slate-500">Koordinat tampil di peta sebaran.</p>
-                  </div>
-                </div>
-                <div class="h-24 rounded-xl bg-gradient-to-br from-emerald-100 via-slate-100 to-sky-100"></div>
-              </div>
-              <div class="grid gap-3 sm:grid-cols-2">
-                <div class="rounded-2xl border border-slate-200 p-4">
-                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Upvote warga</p>
-                  <p class="mt-2 text-2xl font-bold text-slate-950">24</p>
-                </div>
-                <div class="rounded-2xl border border-slate-200 p-4">
-                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Target respon</p>
-                  <p class="mt-2 text-2xl font-bold text-slate-950">1 hari</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <svg class="absolute bottom-0 left-1/2 h-56 w-[760px] -translate-x-1/2 text-white/20" viewBox="0 0 760 220" fill="currentColor"><path d="M20 200V90h70v110h35V45h90v155h40V115h75v85h35V70h95v130h40V35h90v165h45V100h85v100h20v20H20z"/></svg>
+    </div>
+    <div class="relative mx-auto flex min-h-[60vh] max-w-7xl items-center px-4 py-20 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <p class="mb-4 inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">Smart City untuk warga aktif</p>
+        <h1 class="text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">Laporkan Masalah Kota, Wujudkan Perubahan</h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-indigo-50">Platform digital untuk warga aktif berpartisipasi membangun kota lewat laporan berbasis lokasi, notifikasi progres, dan dashboard tindak lanjut yang transparan.</p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href="/reports/new" class="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-3 text-sm font-bold text-indigo-700 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-xl active:scale-95">Buat Laporan Sekarang</a>
+          <a href="/reports/map" class="inline-flex items-center justify-center rounded-2xl border border-white/70 px-6 py-3 text-sm font-bold text-white transition-all duration-200 hover:-translate-y-1 hover:bg-white/10 active:scale-95">Lihat Peta</a>
         </div>
       </div>
     </div>
   </section>
+
+  <section class="relative z-10 mx-auto -mt-12 max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900 sm:grid-cols-2 lg:grid-cols-4">
+      <% [{label:'Total Laporan',value:stats.total},{label:'Sudah Selesai',value:stats.selesai},{label:'Kategori',value:stats.categories},{label:'Warga Aktif',value:stats.warga}].forEach((item) => { %>
+        <div class="border-b border-slate-100 p-6 text-center dark:border-gray-800 sm:border-r lg:border-b-0">
+          <p class="text-3xl font-extrabold text-indigo-600" data-counter="<%= item.value %>">0</p>
+          <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400"><%= item.label %></p>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <div class="mb-10 max-w-2xl">
+      <p class="text-sm font-bold uppercase tracking-wide text-indigo-600">Fitur Utama</p>
+      <h2 class="mt-3 text-3xl font-extrabold text-slate-950 dark:text-white">Satu platform untuk laporan, tindak lanjut, dan transparansi.</h2>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <% [
+        ['Mudah Melapor','Unggah foto, tulis deskripsi, lalu pilih titik lokasi di peta.','M12 21s7-4.6 7-11a7 7 0 1 0-14 0c0 6.4 7 11 7 11Z'],
+        ['Peta Sebaran','Pantau titik laporan berdasarkan kategori dan status secara visual.','M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Z'],
+        ['Notifikasi Realtime','Pelapor mendapat pembaruan ketika status laporan berubah.','M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5'],
+        ['Dashboard Admin','Admin dapat assign petugas, mengelola kategori, dan membaca statistik.','M4 19V5M10 19V9M16 19v-6M22 19H2']
+      ].forEach((feature) => { %>
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900">
+          <div class="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="<%= feature[2] %>" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="text-lg font-bold text-slate-950 dark:text-white"><%= feature[0] %></h3>
+          <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400"><%= feature[1] %></p>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section id="kalender" class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+    <div class="rounded-3xl bg-slate-950 p-8 text-white shadow-xl dark:bg-gray-950 lg:flex lg:items-center lg:justify-between">
+      <div>
+        <p class="text-sm font-bold uppercase tracking-wide text-emerald-300">Kalender Layanan</p>
+        <h2 class="mt-3 text-3xl font-extrabold">Pantau agenda tindak lanjut kota.</h2>
+        <p class="mt-3 max-w-2xl text-slate-300">Gunakan halaman laporan dan notifikasi untuk melihat jadwal tindak lanjut, status penugasan, serta progres terbaru dari petugas.</p>
+      </div>
+      <a href="/reports/my" class="mt-6 inline-flex rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-950 transition-all duration-200 hover:-translate-y-1 active:scale-95 lg:mt-0">Lihat Aktivitas Saya</a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+    <div class="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-sm font-bold uppercase tracking-wide text-indigo-600">Laporan Terbaru</p>
+        <h2 class="mt-3 text-3xl font-extrabold text-slate-950 dark:text-white">6 laporan terbaru dari warga</h2>
+      </div>
+      <a href="/reports/map" class="text-sm font-bold text-indigo-600 hover:text-indigo-700">Lihat semua di peta</a>
+    </div>
+
+    <% if (!latestReports.length) { %>
+      <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center shadow-md dark:border-gray-700 dark:bg-gray-900">
+        <h3 class="text-xl font-bold text-slate-950 dark:text-white">Belum ada laporan publik</h3>
+        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Laporan terbaru akan tampil di sini setelah warga mulai berpartisipasi.</p>
+      </div>
+    <% } else { %>
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <% latestReports.forEach((report) => { %>
+          <% const meta = getStatusMeta(report.status); %>
+          <a href="/reports/<%= report.id %>" class="group overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900">
+            <div class="relative aspect-video bg-slate-200">
+              <% if (report.photo_url) { %><img src="<%= report.photo_url %>" alt="<%= report.title %>" class="h-full w-full object-cover"><% } %>
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent"></div>
+              <span class="absolute right-4 top-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide <%= meta.className %>"><%= meta.label %></span>
+            </div>
+            <div class="p-5">
+              <p class="text-sm font-semibold text-indigo-600"><%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || 'Tanpa kategori' %></p>
+              <h3 class="mt-2 line-clamp-2 text-lg font-extrabold text-slate-950 group-hover:text-indigo-700 dark:text-white"><%= report.title %></h3>
+              <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500 dark:text-slate-400"><%= report.description || 'Tidak ada deskripsi.' %></p>
+              <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-gray-800">
+                <span class="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300"><span class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs text-indigo-700"><%= (report.profiles?.full_name || 'W').slice(0,1).toUpperCase() %></span><%= report.profiles?.full_name || 'Warga' %></span>
+                <span class="text-xs font-semibold text-slate-400"><%= formatDate(report.created_at) %></span>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </section>
+
+  <section id="nomor-darurat" class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+    <div class="grid gap-4 rounded-3xl border border-indigo-100 bg-indigo-50 p-6 dark:border-indigo-950 dark:bg-indigo-950/40 md:grid-cols-3">
+      <div><p class="text-sm font-bold uppercase tracking-wide text-indigo-600 dark:text-indigo-300">Nomor Darurat</p><h2 class="mt-2 text-2xl font-extrabold text-slate-950 dark:text-white">Butuh bantuan cepat?</h2></div>
+      <div class="rounded-2xl bg-white p-4 shadow-sm dark:bg-gray-900"><p class="font-bold text-slate-950 dark:text-white">Call Center Kota</p><p class="text-sm text-slate-500">112 / layanan setempat</p></div>
+      <div class="rounded-2xl bg-white p-4 shadow-sm dark:bg-gray-900"><p class="font-bold text-slate-950 dark:text-white">Keadaan Mendesak</p><p class="text-sm text-slate-500">Hubungi petugas darurat terdekat.</p></div>
+    </div>
+  </section>
 </main>
+
+<script>
+  document.querySelectorAll('[data-counter]').forEach((el) => {
+    const target = Number(el.dataset.counter || 0);
+    const start = performance.now();
+    const animate = (time) => {
+      const progress = Math.min((time - start) / 900, 1);
+      el.textContent = Math.floor(target * progress).toLocaleString('id-ID');
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  });
+</script>
 
 <%- include('partials/footer') %>

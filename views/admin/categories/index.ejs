@@ -1,26 +1,26 @@
 <%- include('../../partials/header', { title }) %>
 
-<main class="mx-auto max-w-6xl px-4 py-10">
-  <div class="grid gap-6 lg:grid-cols-[240px_1fr]">
+<main class="animate-fadeIn bg-gray-50 px-4 py-10 dark:bg-gray-900 sm:px-6 lg:px-8"><div class="mx-auto max-w-7xl">
+  <div class="grid gap-6 lg:grid-cols-[280px_1fr]">
     <%- include('../partials/nav', { activeMenu: 'categories' }) %>
 
     <section>
       <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Master Data</p>
+          <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Master Data</p>
           <h1 class="mt-2 text-3xl font-bold text-slate-950">Kelola Kategori</h1>
           <p class="mt-2 text-slate-600">Atur kategori masalah yang bisa dipilih warga saat membuat laporan.</p>
         </div>
-        <a href="/admin/categories/new" class="inline-flex rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">Tambah Kategori</a>
+        <a href="/admin/categories/new" class="inline-flex rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">Tambah Kategori</a>
       </div>
 
       <% if (error) { %>
-        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
           <%= error %>
         </div>
       <% } %>
 
-      <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900 shadow-sm">
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
@@ -39,9 +39,9 @@
                   <td class="px-4 py-4 text-sm text-slate-600"><%= category.report_count %></td>
                   <td class="px-4 py-4">
                     <div class="flex justify-end gap-2">
-                      <a href="/admin/categories/<%= category.id %>/edit" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Edit</a>
+                      <a href="/admin/categories/<%= category.id %>/edit" class="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Edit</a>
                       <form action="/admin/categories/<%= category.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
-                        <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50">Hapus</button>
+                        <button type="submit" class="rounded-xl border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50">Hapus</button>
                       </form>
                     </div>
                   </td>
@@ -60,6 +60,7 @@
       </section>
     </section>
   </div>
+</div>
 </main>
 
 <%- include('../../partials/footer') %>
