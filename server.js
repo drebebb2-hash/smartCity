@@ -1,0 +1,75 @@
+require('dotenv').config();
+
+const path = require('path');
+const express = require('express');
+const methodOverride = require('method-override');
+const session = require('express-session');
+const flash = require('connect-flash');
+const { createRequestClient, supabasePublicConfig } = require('./config/supabaseClient');
+
+const indexRoutes = require('./routes/indexRoutes');
+const authRoutes = require('./routes/authRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const reportRoutes = require('./routes/reportRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'smart-city-report-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24
+  }
+}));
+app.use(flash());
+
+app.use(async (req, res, next) => {
+  res.locals.currentUser = req.session.user || null;
+  res.locals.messages = {
+    success: req.flash('success'),
+    error: req.flash('error')
+  };
+  res.locals.supabasePublicConfig = supabasePublicConfig;
+  res.locals.unreadNotificationCount = 0;
+
+  if (req.session.user && req.session.access_token) {
+    const userSupabase = createRequestClient(req.session.access_token);
+
+    if (userSupabase) {
+      const { count, error } = await userSupabase
+        .from('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', req.session.user.id)
+        .eq('is_read', false);
+
+      if (!error) {
+        res.locals.unreadNotificationCount = count || 0;
+      }
+    }
+  }
+
+  next();
+});
+
+app.use('/', indexRoutes);
+app.use('/', authRoutes);
+app.use('/', adminRoutes);
+app.use('/', dashboardRoutes);
+app.use('/', reportRoutes);
+app.use('/', notificationRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Smart City Report berjalan di http://localhost:${PORT}`);
+});

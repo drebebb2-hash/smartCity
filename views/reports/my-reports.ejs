@@ -1,0 +1,56 @@
+<%- include('../partials/header', { title }) %>
+
+<main class="mx-auto max-w-6xl px-4 py-10">
+  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Laporan Warga</p>
+      <h1 class="mt-2 text-3xl font-bold text-slate-950">Laporan Saya</h1>
+      <p class="mt-2 text-slate-600">Pantau laporan yang sudah Anda kirim dan status tindak lanjutnya.</p>
+    </div>
+    <% if (currentUser && currentUser.role === 'warga') { %>
+      <a href="/reports/new" class="inline-flex rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+        Buat Laporan
+      </a>
+    <% } %>
+  </div>
+
+  <% if (error) { %>
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <% if (!reports.length) { %>
+    <section class="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+      <h2 class="text-lg font-semibold text-slate-950">Belum ada laporan</h2>
+      <p class="mt-2 text-sm text-slate-500">Laporan yang Anda buat akan muncul di halaman ini.</p>
+    </section>
+  <% } else { %>
+    <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <% reports.forEach((report) => { %>
+        <% const statusMeta = getStatusMeta(report.status); %>
+        <a href="/reports/<%= report.id %>" class="group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+          <div class="aspect-[4/3] bg-slate-100">
+            <% if (report.photo_url) { %>
+              <img src="<%= report.photo_url %>" alt="<%= report.title %>" class="h-full w-full object-cover">
+            <% } else { %>
+              <div class="flex h-full items-center justify-center text-sm text-slate-400">Tidak ada foto</div>
+            <% } %>
+          </div>
+          <div class="space-y-3 p-4">
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-500">
+                <%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || 'Tanpa kategori' %>
+              </span>
+              <span class="rounded-full border px-2.5 py-1 text-xs font-semibold <%= statusMeta.className %>"><%= statusMeta.label %></span>
+            </div>
+            <h2 class="line-clamp-2 text-lg font-semibold text-slate-950 group-hover:text-emerald-700"><%= report.title %></h2>
+            <p class="text-sm text-slate-500"><%= formatDate(report.created_at) %></p>
+          </div>
+        </a>
+      <% }) %>
+    </section>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,9 @@
+<aside class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-6">
+  <p class="mb-3 px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Admin Panel</p>
+  <nav class="grid gap-1">
+    <a href="/admin/dashboard" class="rounded-lg px-3 py-2 text-sm font-medium transition <%= activeMenu === 'dashboard' ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100' %>">Dashboard</a>
+    <a href="/admin/reports" class="rounded-lg px-3 py-2 text-sm font-medium transition <%= activeMenu === 'reports' ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100' %>">Semua Laporan</a>
+    <a href="/admin/categories" class="rounded-lg px-3 py-2 text-sm font-medium transition <%= activeMenu === 'categories' ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100' %>">Kelola Kategori</a>
+    <a href="/admin/statistics" class="rounded-lg px-3 py-2 text-sm font-medium transition <%= activeMenu === 'statistics' ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100' %>">Statistik</a>
+  </nav>
+</aside>

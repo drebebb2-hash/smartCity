@@ -1,0 +1,49 @@
+<%- include('../partials/header', { title }) %>
+
+<main class="mx-auto max-w-4xl px-4 py-10">
+  <div class="mb-8">
+    <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Pusat Informasi</p>
+    <h1 class="mt-2 text-3xl font-bold text-slate-950">Notifikasi</h1>
+    <p class="mt-2 text-slate-600">Pantau kabar terbaru dari laporan dan aktivitas Smart City Report.</p>
+  </div>
+
+  <% if (error) { %>
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <% if (!notifications.length) { %>
+    <section class="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+      <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-2xl text-slate-500">🔔</div>
+      <h2 class="text-lg font-semibold text-slate-950">Belum ada notifikasi</h2>
+      <p class="mt-2 text-sm text-slate-500">Notifikasi baru akan muncul di sini.</p>
+    </section>
+  <% } else { %>
+    <section class="space-y-3">
+      <% notifications.forEach((notification) => { %>
+        <% const targetUrl = notification.report_id ? `/reports/${notification.report_id}` : '/notifications'; %>
+        <form action="/notifications/<%= notification.id %>/read" method="POST">
+          <input type="hidden" name="redirect_to" value="<%= targetUrl %>">
+          <button type="submit" class="flex w-full gap-4 rounded-lg border p-4 text-left transition hover:border-emerald-200 hover:bg-emerald-50/40 <%= notification.is_read ? 'border-slate-200 bg-white' : 'border-emerald-200 bg-emerald-50' %>">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full <%= notification.is_read ? 'bg-slate-100 text-slate-500' : 'bg-emerald-600 text-white' %>">🔔</span>
+            <span class="min-w-0 flex-1">
+              <span class="flex flex-wrap items-center gap-2">
+                <span class="font-medium text-slate-950"><%= notification.message %></span>
+                <% if (!notification.is_read) { %>
+                  <span class="rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white">Baru</span>
+                <% } %>
+              </span>
+              <% if (notification.reports) { %>
+                <span class="mt-1 block text-sm text-slate-600">Laporan: <%= notification.reports.title %></span>
+              <% } %>
+              <span class="mt-2 block text-xs text-slate-500"><%= formatDate(notification.created_at) %></span>
+            </span>
+          </button>
+        </form>
+      <% }) %>
+    </section>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>

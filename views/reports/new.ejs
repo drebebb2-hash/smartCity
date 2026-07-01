@@ -1,0 +1,117 @@
+<%- include('../partials/header', { title }) %>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<main class="mx-auto max-w-6xl px-4 py-10">
+  <div class="mb-8">
+    <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Laporan Warga</p>
+    <h1 class="mt-2 text-3xl font-bold text-slate-950">Buat Laporan Baru</h1>
+    <p class="mt-2 max-w-2xl text-slate-600">Isi detail masalah kota, upload foto, lalu pilih titik lokasi pada peta.</p>
+  </div>
+
+  <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <% if (error) { %>
+      <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form action="/reports" method="POST" enctype="multipart/form-data" class="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+      <div class="space-y-5">
+        <div>
+          <label for="title" class="mb-2 block text-sm font-medium text-slate-700">Judul Laporan</label>
+          <input id="title" name="title" type="text" required value="<%= formData.title || '' %>" placeholder="Contoh: Jalan berlubang di dekat sekolah" class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+        </div>
+
+        <div>
+          <label for="description" class="mb-2 block text-sm font-medium text-slate-700">Deskripsi Masalah</label>
+          <textarea id="description" name="description" rows="6" required placeholder="Jelaskan kondisi masalah, tingkat urgensi, dan dampaknya." class="w-full resize-y rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"><%= formData.description || '' %></textarea>
+        </div>
+
+        <div>
+          <label for="category_id" class="mb-2 block text-sm font-medium text-slate-700">Kategori</label>
+          <select id="category_id" name="category_id" required class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+            <option value="">Pilih kategori</option>
+            <% categories.forEach((category) => { %>
+              <option value="<%= category.id %>" <%= formData.category_id === category.id ? 'selected' : '' %>>
+                <%= category.icon ? `${category.icon} ` : '' %><%= category.name %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div>
+          <label for="photo" class="mb-2 block text-sm font-medium text-slate-700">Foto Masalah</label>
+          <input id="photo" name="photo" type="file" accept="image/*" required class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100">
+          <p class="mt-2 text-xs text-slate-500">Format gambar, maksimal 5 MB.</p>
+        </div>
+
+        <div>
+          <label for="address" class="mb-2 block text-sm font-medium text-slate-700">Alamat atau Keterangan Lokasi</label>
+          <input id="address" name="address" type="text" value="<%= formData.address || '' %>" placeholder="Contoh: Depan gerbang sekolah, sisi kiri jalan" class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+        </div>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <div class="mb-2 flex items-center justify-between gap-3">
+            <label class="block text-sm font-medium text-slate-700">Titik Lokasi Masalah</label>
+            <span id="coordinateText" class="text-xs text-slate-500">Klik peta untuk memilih lokasi</span>
+          </div>
+
+          <div id="reportMap" class="h-[420px] w-full overflow-hidden rounded-lg border border-slate-300"></div>
+          <input id="latitude" name="latitude" type="hidden" value="<%= formData.latitude || '' %>" required>
+          <input id="longitude" name="longitude" type="hidden" value="<%= formData.longitude || '' %>" required>
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+          Pastikan titik yang dipilih sesuai lokasi masalah agar petugas mudah melakukan tindak lanjut.
+        </div>
+
+        <button type="submit" class="w-full rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+          Simpan Laporan
+        </button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const defaultLat = -6.2;
+  const defaultLng = 106.8;
+  const latInput = document.getElementById('latitude');
+  const lngInput = document.getElementById('longitude');
+  const coordinateText = document.getElementById('coordinateText');
+  const initialLat = latInput.value ? Number(latInput.value) : defaultLat;
+  const initialLng = lngInput.value ? Number(lngInput.value) : defaultLng;
+  const map = L.map('reportMap').setView([initialLat, initialLng], 12);
+  let marker = null;
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  function setLocation(lat, lng) {
+    latInput.value = lat.toFixed(7);
+    lngInput.value = lng.toFixed(7);
+    coordinateText.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
+    if (marker) {
+      marker.setLatLng([lat, lng]);
+    } else {
+      marker = L.marker([lat, lng]).addTo(map);
+    }
+  }
+
+  if (latInput.value && lngInput.value) {
+    setLocation(Number(latInput.value), Number(lngInput.value));
+  }
+
+  map.on('click', (event) => {
+    setLocation(event.latlng.lat, event.latlng.lng);
+  });
+</script>
+
+<%- include('../partials/footer') %>

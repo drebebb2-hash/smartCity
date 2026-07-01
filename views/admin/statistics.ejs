@@ -1,0 +1,202 @@
+<%- include('../partials/header', { title }) %>
+
+<main class="mx-auto max-w-6xl px-4 py-10">
+  <div class="grid gap-6 lg:grid-cols-[240px_1fr]">
+    <%- include('partials/nav', { activeMenu: 'statistics' }) %>
+
+    <section>
+      <div class="mb-8">
+        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Analitik Laporan</p>
+        <h1 class="mt-2 text-3xl font-bold text-slate-950">Statistik</h1>
+        <p class="mt-2 text-slate-600">Visualisasi kategori, status, tren laporan, dan kepuasan warga.</p>
+      </div>
+
+      <div id="statsError" class="mb-6 hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"></div>
+
+      <div class="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-slate-500">Rata-rata Rating Kepuasan</p>
+        <div class="mt-2 flex items-end gap-2">
+          <p id="averageRating" class="text-4xl font-bold text-slate-950">-</p>
+          <p class="pb-1 text-sm text-slate-500">/ 5</p>
+        </div>
+      </div>
+
+      <div class="grid gap-6 xl:grid-cols-2">
+        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="mb-4">
+            <h2 class="font-semibold text-slate-950">Laporan per Kategori</h2>
+            <p class="mt-1 text-sm text-slate-500">Jumlah laporan berdasarkan kategori masalah.</p>
+          </div>
+          <div class="h-80">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </article>
+
+        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="mb-4">
+            <h2 class="font-semibold text-slate-950">Distribusi Status</h2>
+            <p class="mt-1 text-sm text-slate-500">Proporsi laporan berdasarkan status terkini.</p>
+          </div>
+          <div class="h-80">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </article>
+
+        <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
+          <div class="mb-4">
+            <h2 class="font-semibold text-slate-950">Tren 8 Minggu Terakhir</h2>
+            <p class="mt-1 text-sm text-slate-500">Jumlah laporan baru per minggu.</p>
+          </div>
+          <div class="h-80">
+            <canvas id="weeklyChart"></canvas>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const palette = {
+    emerald: '#059669',
+    yellow: '#ca8a04',
+    blue: '#2563eb',
+    green: '#16a34a',
+    red: '#dc2626',
+    slate: '#64748b',
+    teal: '#0d9488',
+    violet: '#7c3aed',
+    orange: '#ea580c'
+  };
+
+  const chartColors = [
+    palette.emerald,
+    palette.blue,
+    palette.yellow,
+    palette.red,
+    palette.teal,
+    palette.violet,
+    palette.orange,
+    palette.slate
+  ];
+
+  function showError(message) {
+    const errorBox = document.getElementById('statsError');
+    errorBox.textContent = message;
+    errorBox.classList.remove('hidden');
+  }
+
+  function createCategoryChart(items) {
+    const ctx = document.getElementById('categoryChart');
+
+    return new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: items.map((item) => item.label),
+        datasets: [{
+          label: 'Jumlah laporan',
+          data: items.map((item) => item.count),
+          backgroundColor: chartColors
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
+        }
+      }
+    });
+  }
+
+  function createStatusChart(items) {
+    const ctx = document.getElementById('statusChart');
+    const statusColors = {
+      pending: palette.yellow,
+      diproses: palette.blue,
+      selesai: palette.green,
+      ditolak: palette.red
+    };
+
+    return new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: items.map((item) => item.label),
+        datasets: [{
+          data: items.map((item) => item.count),
+          backgroundColor: items.map((item) => statusColors[item.status] || palette.slate)
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  }
+
+  function createWeeklyChart(items) {
+    const ctx = document.getElementById('weeklyChart');
+
+    return new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: items.map((item) => item.label),
+        datasets: [{
+          label: 'Laporan',
+          data: items.map((item) => item.count),
+          borderColor: palette.emerald,
+          backgroundColor: 'rgba(5, 150, 105, 0.12)',
+          fill: true,
+          tension: 0.35
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
+        }
+      }
+    });
+  }
+
+  async function loadStats() {
+    try {
+      const response = await fetch('/api/admin/stats-data');
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Gagal memuat statistik.');
+      }
+
+      const data = await response.json();
+      document.getElementById('averageRating').textContent = data.averageRating ?? '0';
+
+      createCategoryChart(data.reportsByCategory || []);
+      createStatusChart(data.reportsByStatus || []);
+      createWeeklyChart(data.reportsByWeek || []);
+    } catch (error) {
+      showError(error.message);
+    }
+  }
+
+  loadStats();
+</script>
+
+<%- include('../partials/footer') %>

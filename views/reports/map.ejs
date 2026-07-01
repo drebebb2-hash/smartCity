@@ -1,0 +1,187 @@
+<%- include('../partials/header', { title }) %>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<main class="relative h-[calc(100vh-73px)] w-full">
+  <div id="reportsMap" class="h-full w-full"></div>
+
+  <section class="absolute left-4 top-4 z-[1000] w-[calc(100%-2rem)] max-w-xl rounded-lg border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <div>
+        <h1 class="text-base font-semibold text-slate-950">Peta Laporan</h1>
+        <p class="text-xs text-slate-500">Sebaran laporan masalah kota dari warga.</p>
+      </div>
+      <span id="reportCount" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">0 laporan</span>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div>
+        <label for="categoryFilter" class="mb-1 block text-xs font-medium text-slate-600">Kategori</label>
+        <select id="categoryFilter" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+          <option value="">Semua kategori</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="statusFilter" class="mb-1 block text-xs font-medium text-slate-600">Status</label>
+        <select id="statusFilter" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
+          <option value="">Semua status</option>
+          <option value="pending">Pending</option>
+          <option value="diproses">Diproses</option>
+          <option value="selesai">Selesai</option>
+          <option value="ditolak">Ditolak</option>
+        </select>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('reportsMap').setView([-6.2, 106.8], 12);
+  const markerLayer = L.layerGroup().addTo(map);
+  const categoryFilter = document.getElementById('categoryFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const reportCount = document.getElementById('reportCount');
+  const reports = [];
+  const markers = [];
+
+  const statusMeta = {
+    pending: { label: 'Pending', color: '#ca8a04' },
+    diproses: { label: 'Diproses', color: '#2563eb' },
+    selesai: { label: 'Selesai', color: '#16a34a' },
+    ditolak: { label: 'Ditolak', color: '#dc2626' }
+  };
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function getMarkerIcon(status) {
+    const color = statusMeta[status]?.color || '#64748b';
+
+    return L.divIcon({
+      className: '',
+      html: `
+        <span style="
+          background:${color};
+          width:18px;
+          height:18px;
+          display:block;
+          border:3px solid white;
+          border-radius:9999px;
+          box-shadow:0 2px 8px rgba(15,23,42,.35);
+        "></span>
+      `,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+      popupAnchor: [0, -8]
+    });
+  }
+
+  function getPopupHtml(report) {
+    const status = statusMeta[report.status]?.label || report.status;
+    const image = report.photo_url
+      ? `<img src="${escapeHtml(report.photo_url)}" alt="${escapeHtml(report.title)}" style="width:100%;height:96px;object-fit:cover;border-radius:8px;margin-bottom:10px;">`
+      : '<div style="height:96px;border-radius:8px;background:#f1f5f9;color:#94a3b8;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:12px;">Tidak ada foto</div>';
+
+    return `
+      <div style="width:220px;">
+        ${image}
+        <div style="font-size:12px;color:#64748b;margin-bottom:4px;">${escapeHtml(report.category_icon)} ${escapeHtml(report.category_name)}</div>
+        <div style="font-weight:700;color:#0f172a;margin-bottom:6px;">${escapeHtml(report.title)}</div>
+        <div style="font-size:12px;color:#475569;margin-bottom:10px;">Status: <strong>${escapeHtml(status)}</strong></div>
+        <a href="/reports/${encodeURIComponent(report.id)}" style="display:inline-block;background:#059669;color:white;padding:8px 10px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:700;">Lihat Detail</a>
+      </div>
+    `;
+  }
+
+  function renderCategoryOptions() {
+    const categories = new Map();
+
+    reports.forEach((report) => {
+      if (report.category_id) {
+        categories.set(report.category_id, `${report.category_icon ? `${report.category_icon} ` : ''}${report.category_name}`);
+      }
+    });
+
+    [...categories.entries()]
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .forEach(([id, name]) => {
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = name;
+        categoryFilter.appendChild(option);
+      });
+  }
+
+  function applyFilters() {
+    const selectedCategory = categoryFilter.value;
+    const selectedStatus = statusFilter.value;
+    let visibleCount = 0;
+
+    markers.forEach(({ marker, report }) => {
+      const categoryMatches = !selectedCategory || report.category_id === selectedCategory;
+      const statusMatches = !selectedStatus || report.status === selectedStatus;
+
+      if (categoryMatches && statusMatches) {
+        marker.addTo(markerLayer);
+        visibleCount += 1;
+      } else {
+        markerLayer.removeLayer(marker);
+      }
+    });
+
+    reportCount.textContent = `${visibleCount} laporan`;
+  }
+
+  async function loadReports() {
+    try {
+      const response = await fetch('/api/reports/map-data');
+
+      if (!response.ok) {
+        throw new Error('Gagal mengambil data laporan.');
+      }
+
+      const data = await response.json();
+      reports.push(...data);
+
+      reports.forEach((report) => {
+        if (!Number.isFinite(report.latitude) || !Number.isFinite(report.longitude)) return;
+
+        const marker = L.marker([report.latitude, report.longitude], {
+          icon: getMarkerIcon(report.status)
+        }).bindPopup(getPopupHtml(report));
+
+        markers.push({ marker, report });
+      });
+
+      renderCategoryOptions();
+      applyFilters();
+
+      if (markers.length) {
+        const bounds = L.latLngBounds(markers.map(({ report }) => [report.latitude, report.longitude]));
+        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 14 });
+      }
+    } catch (error) {
+      reportCount.textContent = 'Gagal memuat';
+      console.error(error);
+    }
+  }
+
+  categoryFilter.addEventListener('change', applyFilters);
+  statusFilter.addEventListener('change', applyFilters);
+  loadReports();
+</script>
+
+<%- include('../partials/footer') %>
