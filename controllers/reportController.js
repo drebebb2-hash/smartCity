@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { createRequestClient } = require('../config/supabaseClient');
 const { getPetugasList } = require('./adminController');
+const { createNotification } = require('../config/notificationHelper');
 
 const renderNewReportForm = (res, data = {}) => {
   res.render('reports/new', {
@@ -64,18 +65,47 @@ const getReportForAccessCheck = async (userSupabase, reportId) => {
   return data;
 };
 
-// ===== HELPER: Kirim Notifikasi =====
-const sendNotification = async (userSupabase, userId, message, type) => {
+// ===== HELPER: Kirim notif ke semua admin =====
+const notifyAllAdmins = async (userSupabase, reportId, message) => {
   try {
-    await userSupabase.from('notifications').insert({
-      user_id: userId,
-      message,
-      type,
-      is_read: false,
-      created_at: new Date()
-    });
-  } catch (err) {
-    console.error('Gagal kirim notifikasi:', err.message);
+    const { data: admins } = await userSupabase
+      .from('profiles')
+      .select('id')
+      .eq('role', 'admin');
+
+    if (admins && admins.length > 0) {
+      for (const admin of admins) {
+        try {
+          await createNotification(admin.id, reportId, message, userSupabase);
+        } catch (e) {
+          console.warn('Gagal kirim notif ke admin:', e.message);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Gagal ambil daftar admin:', e.message);
+  }
+};
+
+// ===== HELPER: Kirim notif ke semua petugas =====
+const notifyAllPetugas = async (userSupabase, reportId, message) => {
+  try {
+    const { data: petugas } = await userSupabase
+      .from('profiles')
+      .select('id')
+      .eq('role', 'petugas');
+
+    if (petugas && petugas.length > 0) {
+      for (const p of petugas) {
+        try {
+          await createNotification(p.id, reportId, message, userSupabase);
+        } catch (e) {
+          console.warn('Gagal kirim notif ke petugas:', e.message);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Gagal ambil daftar petugas:', e.message);
   }
 };
 
@@ -120,28 +150,41 @@ exports.createReport = async (req, res) => {
 
     const { data: publicUrlData } = userSupabase.storage.from('report-photos').getPublicUrl(filePath);
 
-    const { error: insertError } = await userSupabase.from('reports').insert({
-      user_id: req.session.user.id,
-      category_id: formData.category_id,
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      photo_url: publicUrlData.publicUrl,
-      latitude: Number(formData.latitude),
-      longitude: Number(formData.longitude),
-      address: formData.address ? formData.address.trim() : null,
-      status: 'pending'
-    });
+    const { data: insertedReport, error: insertError } = await userSupabase
+      .from('reports')
+      .insert({
+        user_id: req.session.user.id,
+        category_id: formData.category_id,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        photo_url: publicUrlData.publicUrl,
+        latitude: Number(formData.latitude),
+        longitude: Number(formData.longitude),
+        address: formData.address ? formData.address.trim() : null,
+        status: 'pending'
+      })
+      .select('id')
+      .single();
 
     if (insertError) {
       return renderNewReportForm(res, { categories, formData, error: `Gagal menyimpan laporan: ${insertError.message}` });
     }
 
-    // ✅ NOTIFIKASI: Kirim ke pelapor bahwa laporan berhasil dibuat
-    await sendNotification(
+    const reportId = insertedReport?.id || null;
+    const judulLaporan = formData.title.trim();
+
+    // ✅ NOTIF ke Admin: ada laporan baru masuk
+    await notifyAllAdmins(
       userSupabase,
-      req.session.user.id,
-      `Laporan "${formData.title.trim()}" berhasil dibuat dan menunggu tindak lanjut.`,
-      'new_report'
+      reportId,
+      `Laporan baru masuk: "${judulLaporan}" menunggu tindak lanjut.`
+    );
+
+    // ✅ NOTIF ke Petugas: ada laporan baru
+    await notifyAllPetugas(
+      userSupabase,
+      reportId,
+      `Ada laporan baru masuk: "${judulLaporan}".`
     );
 
     req.flash('success', 'Laporan berhasil dibuat dan menunggu tindak lanjut.');
@@ -323,15 +366,26 @@ exports.addComment = async (req, res) => {
 
     if (error) throw new Error(error.message);
 
-    // ✅ NOTIFIKASI: Kirim ke pemilik laporan bahwa ada komentar baru
+    // ✅ NOTIF ke pemilik laporan: ada komentar baru (kecuali komentar dari diri sendiri)
     if (report.user_id !== req.session.user.id) {
-      await sendNotification(
-        userSupabase,
-        report.user_id,
-        `Laporan kamu mendapat komentar baru.`,
-        'new_comment'
-      );
+      try {
+        await createNotification(
+          report.user_id,
+          reportId,
+          `Laporan kamu mendapat komentar baru.`,
+          userSupabase
+        );
+      } catch (e) {
+        console.warn('Gagal kirim notif komentar:', e.message);
+      }
     }
+
+    // ✅ NOTIF ke Admin: ada komentar baru di laporan
+    await notifyAllAdmins(
+      userSupabase,
+      reportId,
+      `Ada komentar baru pada laporan ID: ${reportId}.`
+    );
 
     req.flash('success', 'Komentar berhasil ditambahkan.');
     return res.redirect(`/reports/${reportId}`);
@@ -379,14 +433,18 @@ exports.toggleUpvote = async (req, res) => {
 
     if (insertError) throw new Error(insertError.message);
 
-    // ✅ NOTIFIKASI: Kirim ke pemilik laporan bahwa ada upvote baru
+    // ✅ NOTIF ke pemilik laporan: ada upvote baru (kecuali upvote dari diri sendiri)
     if (report.user_id !== req.session.user.id) {
-      await sendNotification(
-        userSupabase,
-        report.user_id,
-        `Laporan kamu mendapat dukungan urgensi baru!`,
-        'new_upvote'
-      );
+      try {
+        await createNotification(
+          report.user_id,
+          reportId,
+          `Laporan kamu mendapat dukungan urgensi baru!`,
+          userSupabase
+        );
+      } catch (e) {
+        console.warn('Gagal kirim notif upvote:', e.message);
+      }
     }
 
     req.flash('success', 'Dukungan urgensi berhasil ditambahkan.');
