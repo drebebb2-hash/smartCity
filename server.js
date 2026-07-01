@@ -13,6 +13,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const infoRouter = require('./routes/infoRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -69,6 +70,7 @@ app.use('/', adminRoutes);
 app.use('/', dashboardRoutes);
 app.use('/', reportRoutes);
 app.use('/', notificationRoutes);
+app.use('/', infoRouter);
 
 app.use((req, res) => {
   res.status(404).render('errors/404', {
