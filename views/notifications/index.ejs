@@ -14,7 +14,7 @@
   <% } %>
 
   <% if (!notifications.length) { %>
-    <section class="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+    <section class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center shadow-sm">
       <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-2xl text-slate-500">🔔</div>
       <h2 class="text-lg font-semibold text-slate-950">Belum ada notifikasi</h2>
       <p class="mt-2 text-sm text-slate-500">Notifikasi baru akan muncul di sini.</p>
@@ -25,7 +25,7 @@
         <% const targetUrl = notification.report_id ? `/reports/${notification.report_id}` : '/notifications'; %>
         <form action="/notifications/<%= notification.id %>/read" method="POST">
           <input type="hidden" name="redirect_to" value="<%= targetUrl %>">
-          <button type="submit" class="flex w-full gap-4 rounded-lg border p-4 text-left transition hover:border-emerald-200 hover:bg-emerald-50/40 <%= notification.is_read ? 'border-slate-200 bg-white' : 'border-emerald-200 bg-emerald-50' %>">
+          <button type="submit" class="flex w-full gap-4 rounded-xl border p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/40 hover:shadow-sm <%= notification.is_read ? 'border-slate-200 bg-white' : 'border-emerald-200 bg-emerald-50' %>">
             <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full <%= notification.is_read ? 'bg-slate-100 text-slate-500' : 'bg-emerald-600 text-white' %>">🔔</span>
             <span class="min-w-0 flex-1">
               <span class="flex flex-wrap items-center gap-2">
