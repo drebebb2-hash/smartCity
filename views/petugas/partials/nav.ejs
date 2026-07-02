@@ -1,0 +1,21 @@
+<aside class="overflow-hidden rounded-3xl bg-gray-900 p-4 text-white shadow-xl lg:sticky lg:top-24">
+  <div class="mb-6 flex items-center gap-3 border-b border-white/10 pb-5">
+    <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-600"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+    <div><p class="text-sm font-extrabold">Petugas Panel</p><p class="text-xs text-gray-400">Smart City Report</p></div>
+  </div>
+  <nav class="grid gap-2">
+    <% [
+      ['dashboard','/petugas/dashboard','Dashboard','M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-4H4v4Z'],
+      ['reports','/petugas/reports','Tugas Laporan','M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z']
+    ].forEach((item) => { %>
+      <a href="<%= item[1] %>" class="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition-all duration-200 active:scale-95 <%= activeMenu === item[0] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/30' : 'text-gray-300 hover:bg-white/10 hover:text-white' %>">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="<%= item[3] %>" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <%= item[2] %>
+      </a>
+    <% }) %>
+  </nav>
+  <div class="mt-8 rounded-2xl bg-white/10 p-4">
+    <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Peringatan Tugas</p>
+    <p class="mt-2 text-sm text-gray-200">Segera tindaklanjuti laporan dengan mengubah status menjadi "Diproses" atau "Selesai" jika sudah ditangani.</p>
+  </div>
+</aside>

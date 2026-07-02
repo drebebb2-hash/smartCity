@@ -1,5 +1,6 @@
 const express = require('express');
 const adminController = require('../controllers/adminController');
+const petugasController = require('../controllers/petugasController');
 const { requireAuth, requireRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -17,5 +18,8 @@ router.put('/admin/categories/:id', requireAuth, requireRole('admin'), adminCont
 router.delete('/admin/categories/:id', requireAuth, requireRole('admin'), adminController.deleteCategory);
 router.post('/admin/reports/:id/assign', requireAuth, requireRole('admin'), adminController.assignReport);
 router.post('/admin/reports/:id/status', requireAuth, requireRole('admin', 'petugas'), adminController.updateReportStatus);
+
+// Petugas Routes
+router.get('/petugas/reports', requireAuth, requireRole('petugas'), petugasController.getMyReports);
 
 module.exports = router;

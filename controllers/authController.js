@@ -165,10 +165,6 @@ req.session.user = {
   avatar_url: profile.avatar_url
 };
 
-return req.session.save(() => {
-  res.redirect('/');
-});
-
     return req.session.save(() => {
       res.redirect(getDashboardPath(profile.role));
     });

@@ -1,0 +1,451 @@
+<%- include('../partials/header', { title }) %>
+
+<main class="animate-fadeIn bg-gray-50 dark:bg-gray-900 min-h-screen">
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-500 to-blue-500 py-20 text-white">
+    <div class="absolute inset-0 opacity-20" aria-hidden="true">
+      <div class="absolute right-0 top-0 h-96 w-96 rounded-full bg-white/10 blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-blue-300/20 blur-2xl"></div>
+    </div>
+    <div class="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+      <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" stroke-linecap="round"/></svg>
+        Pusat Bantuan
+      </div>
+      <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">FAQ & Panduan Penggunaan</h1>
+      <p class="mt-4 text-lg text-indigo-100">Temukan jawaban atas pertanyaan umum dan pelajari cara terbaik menggunakan Smart City Report.</p>
+
+      <!-- Search Bar -->
+      <div class="mx-auto mt-8 max-w-xl">
+        <div class="relative">
+          <svg class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-linecap="round"/></svg>
+          <input
+            id="faqSearch"
+            type="text"
+            placeholder="Cari pertanyaan..."
+            class="w-full rounded-2xl border-0 bg-white/95 py-4 pl-12 pr-4 text-sm font-medium text-slate-700 shadow-xl outline-none ring-2 ring-white/30 backdrop-blur placeholder:text-slate-400 focus:ring-indigo-300"
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Tabs -->
+  <section class="sticky top-16 z-10 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div class="flex gap-1 overflow-x-auto py-3 scrollbar-hide" id="faqTabs" role="tablist">
+        <button class="faq-tab active whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all" data-tab="all">Semua</button>
+        <button class="faq-tab whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all" data-tab="akun">Akun & Login</button>
+        <button class="faq-tab whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all" data-tab="laporan">Buat Laporan</button>
+        <button class="faq-tab whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all" data-tab="status">Status & Proses</button>
+        <button class="faq-tab whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all" data-tab="teknis">Teknis</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Content -->
+  <section class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+
+    <div id="noResults" class="hidden rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-900">
+      <svg class="mx-auto h-12 w-12 text-slate-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-linecap="round"/></svg>
+      <p class="mt-4 font-semibold text-slate-500 dark:text-slate-400">Tidak ada pertanyaan yang cocok.</p>
+      <p class="mt-1 text-sm text-slate-400 dark:text-slate-500">Coba kata kunci yang berbeda.</p>
+    </div>
+
+    <div id="faqList" class="space-y-4">
+
+      <!-- Akun & Login -->
+      <div class="faq-item" data-category="akun" data-question="cara daftar akun register">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-indigo-500 dark:text-indigo-400">Akun & Login</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Bagaimana cara mendaftar akun?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-5 dark:border-indigo-900/50 dark:bg-indigo-950/30">
+            <ol class="space-y-2 text-sm leading-7 text-slate-700 dark:text-slate-300">
+              <li class="flex gap-2"><span class="font-bold text-indigo-600 dark:text-indigo-400">1.</span> Klik tombol <strong>Register</strong> di pojok kanan atas navbar.</li>
+              <li class="flex gap-2"><span class="font-bold text-indigo-600 dark:text-indigo-400">2.</span> Isi nama lengkap, alamat email, dan password yang kuat.</li>
+              <li class="flex gap-2"><span class="font-bold text-indigo-600 dark:text-indigo-400">3.</span> Klik <strong>Buat Akun</strong> dan kamu langsung bisa login.</li>
+              <li class="flex gap-2"><span class="font-bold text-indigo-600 dark:text-indigo-400">4.</span> Akun baru otomatis mendapat peran <strong>Warga</strong>.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="akun" data-question="lupa password reset kata sandi">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-amber-500 dark:text-amber-400">Akun & Login</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Apa yang harus dilakukan jika lupa password?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-amber-100 bg-amber-50 p-5 dark:border-amber-900/50 dark:bg-amber-950/30">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Pada halaman login, klik link <strong>"Lupa password?"</strong> kemudian masukkan email yang terdaftar. Kamu akan menerima email berisi tautan untuk membuat password baru. Pastikan cek folder spam jika email tidak muncul dalam 5 menit.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="akun" data-question="ganti foto profil avatar">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-emerald-500 dark:text-emerald-400">Akun & Login</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Bagaimana cara mengganti foto profil?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 dark:border-emerald-900/50 dark:bg-emerald-950/30">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Buka halaman <strong>Profil</strong> melalui menu dropdown di pojok kanan atas. Di sana kamu dapat mengunggah foto baru dengan mengklik area avatar. Ukuran file maksimum adalah <strong>2MB</strong> dengan format JPG, PNG, atau WebP.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buat Laporan -->
+      <div class="faq-item" data-category="laporan" data-question="cara buat laporan masalah kota">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-blue-500 dark:text-blue-400">Buat Laporan</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Bagaimana cara membuat laporan masalah?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/50 dark:bg-blue-950/30">
+            <ol class="space-y-2 text-sm leading-7 text-slate-700 dark:text-slate-300">
+              <li class="flex gap-2"><span class="font-bold text-blue-600 dark:text-blue-400">1.</span> Login ke akun kamu terlebih dahulu (diperlukan akun Warga).</li>
+              <li class="flex gap-2"><span class="font-bold text-blue-600 dark:text-blue-400">2.</span> Klik <strong>"Buat Laporan"</strong> di navbar atau tombol di halaman utama.</li>
+              <li class="flex gap-2"><span class="font-bold text-blue-600 dark:text-blue-400">3.</span> Isi judul, deskripsi detail, dan pilih kategori yang sesuai.</li>
+              <li class="flex gap-2"><span class="font-bold text-blue-600 dark:text-blue-400">4.</span> Unggah foto sebagai bukti (opsional tapi sangat direkomendasikan).</li>
+              <li class="flex gap-2"><span class="font-bold text-blue-600 dark:text-blue-400">5.</span> Tandai lokasi masalah di peta interaktif.</li>
+              <li class="flex gap-2"><span class="font-bold text-blue-600 dark:text-blue-400">6.</span> Klik <strong>"Kirim Laporan"</strong> dan tunggu konfirmasi.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="laporan" data-question="foto upload gambar ukuran maksimal format">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-rose-500 dark:text-rose-400">Buat Laporan</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Apa ketentuan foto yang bisa diunggah?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-rose-100 bg-rose-50 p-5 dark:border-rose-900/50 dark:bg-rose-950/30">
+            <div class="grid gap-3 sm:grid-cols-3 text-sm text-slate-700 dark:text-slate-300">
+              <div class="rounded-xl bg-white p-3 shadow-sm dark:bg-gray-800">
+                <p class="font-bold text-rose-600 dark:text-rose-400">Format</p>
+                <p class="mt-1">JPG, PNG, WebP, HEIC</p>
+              </div>
+              <div class="rounded-xl bg-white p-3 shadow-sm dark:bg-gray-800">
+                <p class="font-bold text-rose-600 dark:text-rose-400">Ukuran Maks</p>
+                <p class="mt-1">5 MB per foto</p>
+              </div>
+              <div class="rounded-xl bg-white p-3 shadow-sm dark:bg-gray-800">
+                <p class="font-bold text-rose-600 dark:text-rose-400">Tips</p>
+                <p class="mt-1">Foto jelas, pencahayaan baik</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="laporan" data-question="lokasi peta pin titik koordinat">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950 dark:text-teal-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-4.6 7-11a7 7 0 1 0-14 0c0 6.4 7 11 7 11Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-teal-500 dark:text-teal-400">Buat Laporan</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Bagaimana cara menandai lokasi di peta?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-teal-100 bg-teal-50 p-5 dark:border-teal-900/50 dark:bg-teal-950/30">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Di formulir laporan, terdapat peta interaktif. <strong>Klik</strong> pada titik yang ingin kamu laporkan untuk menetapkan pin lokasi. Kamu juga bisa klik tombol <strong>"Gunakan Lokasiku"</strong> untuk otomatis menggunakan lokasi GPS perangkatmu. Pin bisa dipindahkan dengan cara klik di lokasi yang baru.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status & Proses -->
+      <div class="faq-item" data-category="status" data-question="status laporan pending diproses selesai ditolak artinya">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10l4 4"/><circle cx="12" cy="12" r="10"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-violet-500 dark:text-violet-400">Status & Proses</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Apa arti masing-masing status laporan?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-violet-100 bg-violet-50 p-5 dark:border-violet-900/50 dark:bg-violet-950/30">
+            <div class="grid gap-3 sm:grid-cols-2 text-sm">
+              <div class="flex items-start gap-3 rounded-xl bg-white p-3 shadow-sm dark:bg-gray-800">
+                <span class="mt-0.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-700 dark:bg-amber-900 dark:text-amber-300">Pending</span>
+                <p class="text-slate-600 dark:text-slate-400">Laporan diterima, menunggu review admin.</p>
+              </div>
+              <div class="flex items-start gap-3 rounded-xl bg-white p-3 shadow-sm dark:bg-gray-800">
+                <span class="mt-0.5 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-bold text-blue-700 dark:bg-blue-900 dark:text-blue-300">Diproses</span>
+                <p class="text-slate-600 dark:text-slate-400">Petugas sedang menangani masalah.</p>
+              </div>
+              <div class="flex items-start gap-3 rounded-xl bg-white p-3 shadow-sm dark:bg-gray-800">
+                <span class="mt-0.5 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">Selesai</span>
+                <p class="text-slate-600 dark:text-slate-400">Masalah telah diselesaikan oleh petugas.</p>
+              </div>
+              <div class="flex items-start gap-3 rounded-xl bg-white p-3 shadow-sm dark:bg-gray-800">
+                <span class="mt-0.5 rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-bold text-rose-700 dark:bg-rose-900 dark:text-rose-300">Ditolak</span>
+                <p class="text-slate-600 dark:text-slate-400">Laporan tidak memenuhi kriteria atau duplikat.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="status" data-question="notifikasi pemberitahuan update laporan">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-950 dark:text-orange-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 21h4" stroke-linecap="round"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-orange-500 dark:text-orange-400">Status & Proses</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Kapan saya mendapat notifikasi?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-orange-100 bg-orange-50 p-5 dark:border-orange-900/50 dark:bg-orange-950/30">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Kamu akan mendapat notifikasi otomatis setiap kali status laporan berubah — dari <em>Pending → Diproses</em>, <em>Diproses → Selesai</em>, atau jika laporan <em>Ditolak</em>. Notifikasi muncul di ikon lonceng (🔔) di navbar secara real-time. Kamu bisa lihat semua riwayat notifikasi di halaman <a href="/notifications" class="font-bold text-orange-600 hover:underline dark:text-orange-400">Notifikasi</a>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="status" data-question="berapa lama waktu proses tindak lanjut laporan">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-cyan-500 dark:text-cyan-400">Status & Proses</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Berapa lama waktu tindak lanjut laporan?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-cyan-100 bg-cyan-50 p-5 dark:border-cyan-900/50 dark:bg-cyan-950/30">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Waktu tindak lanjut bervariasi tergantung jenis masalah dan prioritas. Umumnya laporan diverifikasi dalam <strong>1×24 jam</strong>. Untuk masalah darurat seperti jalan berlubang besar atau kebocoran pipa, penanganan bisa lebih cepat. Gunakan fitur <strong>komentar</strong> di detail laporan untuk update lebih lanjut.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teknis -->
+      <div class="faq-item" data-category="teknis" data-question="dark mode tema gelap terang ubah tampilan">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Teknis</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Bagaimana cara mengaktifkan Dark Mode?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-800">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Klik ikon <strong>☀️ Matahari / 🌙 Bulan</strong> di navbar kanan atas untuk toggle antara mode Terang dan Gelap. Pilihanmu akan disimpan di browser sehingga otomatis aktif saat kamu kembali. Jika tidak pernah mengubah, tampilan mengikuti preferensi sistem operasimu secara otomatis.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="teknis" data-question="browser support kompatibilitas perangkat mobile desktop">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-indigo-500 dark:text-indigo-400">Teknis</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Browser dan perangkat apa yang didukung?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-5 dark:border-indigo-900/50 dark:bg-indigo-950/30">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Smart City Report berjalan optimal di <strong>Chrome, Firefox, Edge, Safari</strong> versi terbaru. Platform ini sepenuhnya responsif dan dapat diakses dari <strong>perangkat mobile, tablet, maupun desktop</strong>. Untuk fitur peta dan GPS, izinkan akses lokasi di browser.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="teknis" data-question="data privasi aman keamanan">
+        <button class="faq-trigger group flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-900">
+          <div class="flex items-start gap-4">
+            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wide text-emerald-500 dark:text-emerald-400">Teknis</span>
+              <p class="mt-1 font-semibold text-slate-800 dark:text-white">Apakah data saya aman?</p>
+            </div>
+          </div>
+          <svg class="faq-chevron mt-1 h-5 w-5 shrink-0 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer hidden px-5 pb-5">
+          <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 dark:border-emerald-900/50 dark:bg-emerald-950/30">
+            <p class="text-sm leading-7 text-slate-700 dark:text-slate-300">Ya. Data kamu disimpan menggunakan <strong>Supabase</strong> dengan enkripsi end-to-end. Password tidak pernah disimpan dalam bentuk plaintext. Akses data diatur dengan Row Level Security (RLS) sehingga setiap pengguna hanya bisa mengakses data miliknya. Foto diunggah ke penyimpanan terenkripsi.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA Bantuan Lainnya -->
+    <div class="mt-12 rounded-3xl bg-gradient-to-br from-indigo-600 to-blue-500 p-8 text-center text-white shadow-xl">
+      <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
+        <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <h2 class="text-xl font-extrabold">Masih punya pertanyaan?</h2>
+      <p class="mt-2 text-indigo-100">Tidak menemukan jawaban yang kamu cari? Hubungi tim kami.</p>
+      <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <a href="mailto:help@smartcity.local" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-indigo-700 shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-95">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          help@smartcity.local
+        </a>
+        <a href="/info/emergency" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/20 active:scale-95">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12 19.79 19.79 0 0 1 1.08 3.4 2 2 0 0 1 3.05 1.2h3a2 2 0 0 1 2 1.72c.127.96.36 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0 1 21 16z"/></svg>
+          Nomor Darurat
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<style>
+  .faq-tab { color: #64748b; }
+  .dark .faq-tab { color: #94a3b8; }
+  .faq-tab.active { background-color: #4f46e5; color: white; }
+  .dark .faq-tab.active { background-color: #4f46e5; color: white; }
+  .faq-tab:not(.active):hover { background-color: #f1f5f9; color: #4f46e5; }
+  .dark .faq-tab:not(.active):hover { background-color: #1f2937; color: #818cf8; }
+  .faq-answer { transition: all 0.2s ease; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<script>
+  (() => {
+    // Accordion toggle
+    document.querySelectorAll('.faq-trigger').forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const item = trigger.closest('.faq-item');
+        const answer = item.querySelector('.faq-answer');
+        const chevron = trigger.querySelector('.faq-chevron');
+        const isOpen = !answer.classList.contains('hidden');
+
+        // Close all
+        document.querySelectorAll('.faq-answer').forEach((a) => a.classList.add('hidden'));
+        document.querySelectorAll('.faq-chevron').forEach((c) => c.style.transform = '');
+        document.querySelectorAll('.faq-trigger').forEach((t) => {
+          t.classList.remove('border-indigo-300', 'bg-indigo-50', 'dark:bg-indigo-950/20', 'dark:border-indigo-800');
+        });
+
+        if (!isOpen) {
+          answer.classList.remove('hidden');
+          chevron.style.transform = 'rotate(180deg)';
+          trigger.classList.add('border-indigo-300', 'bg-indigo-50', 'dark:bg-indigo-950/20', 'dark:border-indigo-800');
+        }
+      });
+    });
+
+    // Tab filter
+    const tabs = document.querySelectorAll('.faq-tab');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        const category = tab.dataset.tab;
+        filterFAQ(category, document.getElementById('faqSearch').value.toLowerCase());
+      });
+    });
+
+    // Search
+    document.getElementById('faqSearch').addEventListener('input', (e) => {
+      const activeTab = document.querySelector('.faq-tab.active')?.dataset.tab || 'all';
+      filterFAQ(activeTab, e.target.value.toLowerCase());
+    });
+
+    function filterFAQ(category, query) {
+      const items = document.querySelectorAll('.faq-item');
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const itemCategory = item.dataset.category;
+        const itemQuestion = (item.dataset.question || '').toLowerCase();
+        const questionText = item.querySelector('.faq-trigger p')?.textContent.toLowerCase() || '';
+
+        const categoryMatch = category === 'all' || itemCategory === category;
+        const searchMatch = !query || itemQuestion.includes(query) || questionText.includes(query);
+
+        if (categoryMatch && searchMatch) {
+          item.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.classList.add('hidden');
+          // Close hidden items
+          item.querySelector('.faq-answer')?.classList.add('hidden');
+          const chevron = item.querySelector('.faq-chevron');
+          if (chevron) chevron.style.transform = '';
+        }
+      });
+
+      document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+    }
+  })();
+</script>
+
+<%- include('../partials/footer') %>

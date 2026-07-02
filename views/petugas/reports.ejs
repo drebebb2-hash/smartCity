@@ -1,0 +1,133 @@
+<%- include('../partials/header', { title }) %>
+
+<main class="animate-fadeIn bg-gray-50 px-4 py-10 dark:bg-gray-900 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid gap-6 lg:grid-cols-[280px_1fr]">
+      <%- include('partials/nav', { activeMenu: 'reports' }) %>
+
+      <section>
+        <div class="mb-8">
+          <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Daftar Tugas Laporan</p>
+          <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Tugas Saya</h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-400">Kelola dan update status penanganan laporan yang ditugaskan kepada Anda.</p>
+        </div>
+
+        <% if (error) { %>
+          <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Filter Form -->
+        <form action="/petugas/reports" method="GET" class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <div class="grid gap-4 md:grid-cols-[1fr_2fr_auto] md:items-end">
+            <div>
+              <label for="status" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Status Tugas</label>
+              <select id="status" name="status" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100">
+                <option value="">Semua status</option>
+                <% statusList.forEach((status) => { %>
+                  <% const meta = getStatusMeta(status); %>
+                  <option value="<%= status %>" <%= filters.status === status ? 'selected' : '' %>><%= meta.label %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div>
+              <label for="search" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Cari Judul Laporan</label>
+              <input id="search" name="search" type="search" value="<%= filters.search %>" placeholder="Masukkan kata kunci judul" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-100">
+            </div>
+
+            <div class="flex gap-2">
+              <button type="submit" class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">Filter</button>
+              <a href="/petugas/reports" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-gray-700 dark:text-slate-300 dark:hover:bg-gray-800">Reset</a>
+            </div>
+          </div>
+        </form>
+
+        <!-- Reports Container -->
+        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900 shadow-sm">
+          <div class="hidden overflow-x-auto lg:block">
+            <table class="min-w-full divide-y divide-slate-200 dark:divide-gray-800">
+              <thead class="bg-slate-50 dark:bg-gray-800/50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Laporan</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Pelapor</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Kategori</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Tanggal</th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-gray-800">
+                <% if (!reports.length) { %>
+                  <tr>
+                    <td colspan="6" class="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+                      Tidak ada tugas laporan ditemukan.
+                    </td>
+                  </tr>
+                <% } else { %>
+                  <% reports.forEach((report) => { %>
+                    <% const statusMeta = getStatusMeta(report.status); %>
+                    <tr class="transition hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                      <td class="px-4 py-4">
+                        <div class="font-semibold text-slate-900 dark:text-white"><%= report.title %></div>
+                      </td>
+                      <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-300">
+                        <%= report.profiles?.full_name || 'Warga Anonim' %>
+                      </td>
+                      <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-300">
+                        <%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || 'Tanpa kategori' %>
+                      </td>
+                      <td class="px-4 py-4">
+                        <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide <%= statusMeta.className %>"><%= statusMeta.label %></span>
+                      </td>
+                      <td class="px-4 py-4 text-sm text-slate-500 dark:text-slate-400">
+                        <%= formatDate(report.created_at) %>
+                      </td>
+                      <td class="px-4 py-4 text-right">
+                        <a href="/reports/<%= report.id %>" class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-gray-800 dark:text-slate-300 dark:hover:bg-gray-800">
+                          Detail & Tindak Lanjut
+                        </a>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Cards Layout -->
+          <div class="divide-y divide-slate-200 dark:divide-gray-800 lg:hidden">
+            <% if (!reports.length) { %>
+              <div class="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+                Tidak ada tugas laporan ditemukan.
+              </div>
+            <% } else { %>
+              <% reports.forEach((report) => { %>
+                <% const statusMeta = getStatusMeta(report.status); %>
+                <div class="p-4 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide <%= statusMeta.className %>"><%= statusMeta.label %></span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400"><%= formatDate(report.created_at) %></span>
+                  </div>
+                  <h3 class="font-bold text-slate-950 dark:text-white"><%= report.title %></h3>
+                  <div class="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+                    <span>Pelapor: <strong><%= report.profiles?.full_name || 'Warga Anonim' %></strong></span>
+                    <span><%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || 'Tanpa kategori' %></span>
+                  </div>
+                  <div class="pt-2">
+                    <a href="/reports/<%= report.id %>" class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100 dark:border-gray-800 dark:text-slate-300 dark:hover:bg-gray-800">
+                      Detail & Tindak Lanjut
+                    </a>
+                  </div>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+        </section>
+      </section>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

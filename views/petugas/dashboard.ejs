@@ -1,51 +1,93 @@
 <%- include('../partials/header', { title }) %>
 
-<main class="animate-fadeIn mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-  <div class="mb-8">
-    <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Tugas Petugas</p>
-    <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Dashboard Petugas</h1>
-    <p class="mt-2 text-slate-600 dark:text-slate-400">Daftar laporan yang ditugaskan kepada Anda untuk ditindaklanjuti.</p>
-  </div>
+<main class="animate-fadeIn bg-gray-50 px-4 py-10 dark:bg-gray-900 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid gap-6 lg:grid-cols-[280px_1fr]">
+      <%- include('partials/nav', { activeMenu: 'dashboard' }) %>
 
-  <% if (error) { %>
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-      <%= error %>
+      <section>
+        <div class="mb-8">
+          <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Tugas Petugas</p>
+          <h1 class="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Dashboard Petugas</h1>
+          <p class="mt-2 text-slate-600 dark:text-slate-400">Daftar laporan yang ditugaskan kepada Anda untuk ditindaklanjuti.</p>
+        </div>
+
+        <% if (error) { %>
+          <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Statistics Widget Grid -->
+        <div class="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+            <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-slate-800"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg></div>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Tugas</p>
+            <p class="mt-2 text-3xl font-bold text-slate-950 dark:text-white"><%= stats.total %></p>
+          </article>
+
+          <% ['pending', 'diproses', 'selesai', 'ditolak'].forEach((status) => { %>
+            <% const meta = getStatusMeta(status); %>
+            <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+              <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border <%= meta.className %>">
+                <% if (status === 'pending') { %>
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>
+                <% } else if (status === 'diproses') { %>
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.8 2.8-3-3 2.8-2.8Z"/></svg>
+                <% } else if (status === 'selesai') { %>
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <% } else { %>
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg>
+                <% } %>
+              </div>
+              <p class="text-sm font-medium text-slate-500 dark:text-slate-400"><%= meta.label %></p>
+              <p class="mt-2 text-3xl font-bold text-slate-950 dark:text-white"><%= stats[status] %></p>
+            </article>
+          <% }) %>
+        </div>
+
+        <!-- Recent assigned tasks header -->
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-slate-950 dark:text-white">Tugas Terbaru</h2>
+          <a href="/petugas/reports" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">Lihat Semua Laporan →</a>
+        </div>
+
+        <% if (!reports.length) { %>
+          <section class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-indigo-600 dark:bg-emerald-950/30"><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7V3Z"/><path d="M14 3v5h5M9 13h6M9 17h4" stroke-linecap="round"/></svg></div>
+            <h2 class="text-lg font-semibold text-slate-950 dark:text-white">Belum ada laporan ditugaskan</h2>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Laporan yang di-assign admin ke Anda akan tampil di sini.</p>
+          </section>
+        <% } else { %>
+          <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <% reports.forEach((report) => { %>
+              <% const statusMeta = getStatusMeta(report.status); %>
+              <a href="/reports/<%= report.id %>" class="group relative overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900">
+                <div class="relative aspect-video bg-slate-200">
+                  <% if (report.photo_url) { %>
+                    <img src="<%= report.photo_url %>" alt="<%= report.title %>" class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
+                  <% } else { %>
+                    <div class="flex h-full items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-100 text-sm font-semibold text-indigo-500">Tidak ada foto</div>
+                  <% } %>
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent"></div>
+                </div>
+                <div class="space-y-3 p-5">
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="text-sm text-slate-500 dark:text-slate-400">
+                      <%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || 'Tanpa kategori' %>
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide <%= statusMeta.className %>"><%= statusMeta.label %></span>
+                  </div>
+                  <h2 class="line-clamp-2 text-lg font-semibold text-slate-950 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400"><%= report.title %></h2>
+                  <p class="text-sm text-slate-500 dark:text-slate-400"><%= formatDate(report.created_at) %></p>
+                </div>
+              </a>
+            <% }) %>
+          </section>
+        <% } %>
+      </section>
     </div>
-  <% } %>
-
-  <% if (!reports.length) { %>
-    <section class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center shadow-sm dark:border-gray-700 dark:bg-gray-900">
-      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-indigo-600 dark:bg-emerald-950/30"><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7V3Z"/><path d="M14 3v5h5M9 13h6M9 17h4" stroke-linecap="round"/></svg></div>
-      <h2 class="text-lg font-semibold text-slate-950 dark:text-white">Belum ada laporan ditugaskan</h2>
-      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Laporan yang di-assign admin ke Anda akan tampil di sini.</p>
-    </section>
-  <% } else { %>
-    <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      <% reports.forEach((report) => { %>
-        <% const statusMeta = getStatusMeta(report.status); %>
-        <a href="/reports/<%= report.id %>" class="group relative overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900">
-          <div class="relative aspect-video bg-slate-200">
-            <% if (report.photo_url) { %>
-              <img src="<%= report.photo_url %>" alt="<%= report.title %>" class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
-            <% } else { %>
-              <div class="flex h-full items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-100 text-sm font-semibold text-indigo-500">Tidak ada foto</div>
-            <% } %>
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent"></div>
-          </div>
-          <div class="space-y-3 p-5">
-            <div class="flex items-center justify-between gap-3">
-              <span class="text-sm text-slate-500 dark:text-slate-400">
-                <%= report.categories?.icon ? `${report.categories.icon} ` : '' %><%= report.categories?.name || 'Tanpa kategori' %>
-              </span>
-              <span class="absolute right-4 top-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide <%= statusMeta.className %>"><%= statusMeta.label %></span>
-            </div>
-            <h2 class="line-clamp-2 text-lg font-semibold text-slate-950 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400"><%= report.title %></h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400"><%= formatDate(report.created_at) %></p>
-          </div>
-        </a>
-      <% }) %>
-    </section>
-  <% } %>
+  </div>
 </main>
 
 <%- include('../partials/footer') %>

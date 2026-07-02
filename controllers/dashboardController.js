@@ -48,7 +48,9 @@ exports.showWargaDashboard = (req, res) => {
 exports.showPetugasDashboard = async (req, res) => {
   try {
     const userSupabase = createRequestClient(req.session.access_token);
-    const { data, error } = await userSupabase
+    
+    // Fetch reports assigned to this officer
+    const { data: reports, error } = await userSupabase
       .from('reports')
       .select(`
         id,
@@ -69,19 +71,35 @@ exports.showPetugasDashboard = async (req, res) => {
       throw new Error(error.message);
     }
 
+    // Calculate statistics
+    const stats = {
+      total: reports.length,
+      pending: reports.filter(r => r.status === 'pending').length,
+      diproses: reports.filter(r => r.status === 'diproses').length,
+      selesai: reports.filter(r => r.status === 'selesai').length,
+      ditolak: reports.filter(r => r.status === 'ditolak').length
+    };
+
+    // We only display the 5 most recent tasks on the dashboard main page
+    const recentReports = reports.slice(0, 5);
+
     return res.render('petugas/dashboard', {
       title: 'Dashboard Petugas',
-      reports: data || [],
+      reports: recentReports,
+      stats,
       getStatusMeta,
       formatDate,
+      activeMenu: 'dashboard',
       error: null
     });
   } catch (error) {
     return res.render('petugas/dashboard', {
       title: 'Dashboard Petugas',
       reports: [],
+      stats: { total: 0, pending: 0, diproses: 0, selesai: 0, ditolak: 0 },
       getStatusMeta,
       formatDate,
+      activeMenu: 'dashboard',
       error: `Gagal memuat tugas petugas: ${error.message}`
     });
   }
