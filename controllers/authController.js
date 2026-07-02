@@ -154,14 +154,20 @@ exports.login = async (req, res) => {
       profile = createdProfile;
     }
 
-    req.session.access_token = session.access_token;
-    req.session.user = {
-      id: user.id,
-      email: user.email,
-      full_name: profile.full_name,
-      role: profile.role,
-      avatar_url: profile.avatar_url
-    };
+req.session.access_token = session.access_token;
+req.session.refresh_token = session.refresh_token;
+req.session.expires_at = session.expires_at;
+req.session.user = {
+  id: user.id,
+  email: user.email,
+  full_name: profile.full_name,
+  role: profile.role,
+  avatar_url: profile.avatar_url
+};
+
+return req.session.save(() => {
+  res.redirect('/');
+});
 
     return req.session.save(() => {
       res.redirect(getDashboardPath(profile.role));
