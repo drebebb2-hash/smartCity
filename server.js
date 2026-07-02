@@ -6,6 +6,7 @@ const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
 const { createRequestClient, supabasePublicConfig } = require('./config/supabaseClient');
+const { refreshSessionIfNeeded } = require('./middleware/authMiddleware'); // <-- DITAMBAHKAN
 
 const indexRoutes = require('./routes/indexRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -41,10 +42,11 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24
+    maxAge: 1000 * 60 * 60 * 24 * 7 // <-- DIUBAH dari 1 hari jadi 7 hari
   }
 }));
 app.use(flash());
+app.use(refreshSessionIfNeeded); // <-- DITAMBAHKAN (harus setelah flash dan session)
 
 app.use(async (req, res, next) => {
   res.locals.currentUser = req.session.user || null;
